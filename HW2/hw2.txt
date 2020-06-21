@@ -1,0 +1,59 @@
+I wrote my make_parser in terms of my make_matcher but with a slight variation
+of being able to pass a path variable to keep track of all the non-terminal 
+symbols we have encountered in a list structure. This is because make_parser 
+will only be able to generate a parse tree if there is a match in the grammar 
+rule and the acceptor only accepts an empty list. The acceptor needs to only
+accept an empty list because in order for our parser to produce a full parse
+tree, it needs to match with every fragment provided.  So the first part of 
+make_parser should be to check whether a parse_tree can be created and we use a
+slight alteration of make_matcher in order to accomplish this. The rest of 
+parser is about using the list of Non-Terminals and its rules to generate the 
+parse tree. Thus, I did not have duplicate functions in my code, but instead
+I have an altered version of make_matcher for make_parser. Because make_matcher
+does not need to care about the path it traversed, only the suffix that is 
+left, we cannot simply reuse make_matcher's function for make_parser.
+We need an altered version of make_matcher that can keep track of all the 
+Non Terminals that we have traversed in our valid match. To do so, I added
+an extra parameter to my altered make_matcher that will keep track of all 
+the non terminals we encountered and its corresponding rule that we use to 
+find our final match. I stored these as a tuple pair, and in the end my 
+altered make_matcher returns a list of tuple pairs. I also altered my
+acceptor function that I passed in. As our old acceptors, return a suffix,
+I want my new acceptor to return the path given the correct fragment. with
+this I now have an altered version of make_matcher used for make_parser, in
+order to generate a valid parse tree for a particular grammar given a 
+fragment.
+
+Some weakness in my solution is that when I'm parsing(matching) a fragment, I 
+do it from left to right fashion(LL Parser), so I cannot handle left-recursive 
+grammar with my solution. Let's say we have the following grammar rule 
+(A, A -> [[N A;T"Two"]; [T"One"]]). Our matcher/parser will fail to match the
+fragment ["One";"Two"] as there will be an infinite recursion trying to look
+for more rules of A, but if our matcher/parser began looking through list of
+rules from right to left, it will be able to match fragment "One" "Two" as
+the rule [T"One"] is always examined first. Nevertheless, even if we begin
+looking through rules from right to left, our matcher/parser will fail and 
+enter an infinite recursion on all fragments that does not begin with a 
+T"One". This is because if fragment does not begin with a "One", our parser
+/matcher will enter infinite recursion trying to look for more rules of A. 
+This problem can be solved by re-writing our matcher and parser to go
+from right to left, but then our parser/matcher willnot work on right-
+recursive grammars. A common solution for this problem is to eliminate 
+left-recursive grammar, but I believe that is beyond the scope of this
+project.
+
+In addition, another weakness for my matcher is that it will only return the
+most "left" match in our case going through rules from left to right, that 
+can pass through our acceptor. For example, in the awkish_grammar in 
+the specs, if we have the following fragment: ["$";"9";"+";"$";"9";"++"]
+and our acceptor accepts all matches, it will not be possible for my 
+matcher to return an empty suffix, even though following the rules of 
+awkish_grammar, an empty suffix can be generated. Our matcher will return
+["++"] as the suffix because we begin from the left to right and
+["$";"9";"+";"$";"9"] already completely matches with a rule, so our matcher
+will return the suffic ["++"] as it is done finding a valid match. The same
+goes with the parser as the first part of our parser is based on the matcher.
+The parser will return the first parse tree it finds going from left to right,
+in the case where multiple parse tree exists. If only one parse tree exists,
+then regardless of going from left to right or right to left, we are going 
+to get the same parse tree. 

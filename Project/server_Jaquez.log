@@ -1,0 +1,509 @@
+INFO: Initialize log file for server Jaquez
+INFO: starting up Jaquez server...
+INFO: Jaquez recieved: IAMAT melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Error connecting to server Hill
+INFO: Error connecting to server Singleton
+INFO: Sending message back to client: AT Jaquez -29177763.82922387 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: close the client socket
+INFO: Jaquez recieved: ss
+INFO: Sending message back to client: ? ss
+INFO: close the client socket
+INFO: Jaquez recieved: ss
+
+INFO: Sending message back to client: ? ss
+
+INFO: close the client socket
+INFO: Jaquez recieved: ss
+
+INFO: Sending message back to client: ? ss
+
+INFO: close the client socket
+INFO: Jaquez recieved: cacsc
+
+INFO: Sending message back to client: ? cacsc
+
+INFO: close the client socket
+INFO: Jaquez recieved: dd
+INFO: Sending message back to client: ? dd
+INFO: close the client socket
+INFO: Jaquez recieved: IAMAT melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Error connecting to server Hill
+INFO: Error connecting to server Singleton
+INFO: Sending message back to client: AT Jaquez -29177634.67598486 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: close the client socket
+INFO: Jaquez recieved: IAMAT melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+
+INFO: Error connecting to server Hill
+INFO: Error connecting to server Singleton
+INFO: Sending message back to client: AT Jaquez -29177619.311910868 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: close the client socket
+INFO: Jaquez recieved: WHATSAT melody.cs.ucla.edu 10 5
+
+INFO: Attempting to retrieve places at location +25.032969,+121.565414
+INFO: Successfully retrieved 20 place(s) from API
+INFO: Sending message back to client: AT Jaquez -29177619.311910868 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+{
+    "html_attributions": [],
+    "next_page_token": "CqQCEgEAAEBM5HxspsShlRxvEMlkN-2EozKBWkbYT6MYEF4sCc37Ku7Yh3ZzAzm2xixvwYPgM5Lgb_RW4O-OiHCJaWqtJuf_FJFVJbe2v6OSnG47RoV6lCmk4pxFuBlYwdks93g2lvb7NsRKOXlPlwKUCU0UqdCHiuElR5VjznzQzZSyL5sTND_slUe-TW-RTk4YRGPU-yZ2felUf7CumCYwBVNC27Foz28xnfz56lDF3OrI9b_-IJViPKhoxkKL24MKBC4lk8CaryP2rPTbQAHQlYt68mZkUV9tZSBPYVtm3PfrHDz-Kia5V08hoN69WdOAVXJlm7Klj2Jwv2nTnYDA01CBVo91hGtV2ibxbOgzHmb2EA3iipy2qtG-gI-UnYJexXSFjRIQcj7BowoDsD3YsQnqLHj4pRoU3PL02Ox37kJCCynT2w8sJqhF4ic",
+    "results": [
+        {
+            "geometry": {
+                "location": {
+                    "lat": 25.0329663,
+                    "lng": 121.5654804
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0343152802915,
+                        "lng": 121.5668294302915
+                    },
+                    "southwest": {
+                        "lat": 25.0316173197085,
+                        "lng": 121.5641314697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png",
+            "id": "1b154b1d55c9bc8eb459e7ac010045c656b233fe",
+            "name": "Section 5, Xinyi Road",
+            "place_id": "ChIJMbcny7arQjQRJEUr-dV-UFo",
+            "reference": "ChIJMbcny7arQjQRJEUr-dV-UFo",
+            "scope": "GOOGLE",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 25.0329694,
+                    "lng": 121.5654177
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0343466802915,
+                        "lng": 121.5667666302915
+                    },
+                    "southwest": {
+                        "lat": 25.0316487197085,
+                        "lng": 121.5640686697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+            "id": "7d9b2f6f1c84fd7b3f48d6b2bf8436bb533b9379",
+            "name": "\u6e05\u6c38\u8cbf\u6613\u80a1\u4efd\u6709\u9650\u516c\u53f8",
+            "opening_hours": {
+                "open_now": false
+            },
+            "place_id": "ChIJqXZDo3CuQjQRd7ZddROM1ek",
+            "plus_code": {
+                "compound_code": "2HM8+55 Taipei, Taiwan",
+                "global_code": "7QQ32HM8+55"
+            },
+            "reference": "ChIJqXZDo3CuQjQRd7ZddROM1ek",
+            "scope": "GOOGLE",
+            "types": [
+                "point_of_interest",
+                "establishment"
+            ],
+            "vicinity": "1\u6a13, No. 27\u865f, \u884c\u7fa9\u8def154\u5df7, \u5317\u6295\u5340"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 25.0329636,
+                    "lng": 121.5654269
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0342836802915,
+                        "lng": 121.5667759302915
+                    },
+                    "southwest": {
+                        "lat": 25.0315857197085,
+                        "lng": 121.5640779697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+            "id": "17a98c63e3f34f887c80271b86a35d5e3e2bc112",
+            "name": "\u53f0\u5317\u5e02",
+            "photos": [
+                {
+                    "height": 4032,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/105410424809052519023\">\u7c21\u660e\u6708</a>"
+                    ],
+                    "photo_reference": "CmRaAAAAn078_ifkhvoZraEkANdA5UQzEQmyYeMuq3CirlzuOd5X7fX4vmpv3wtbRIVRgaH-nTu9K5v2dL2G1rOILmeEOcdvgmX1zsQFRvQkqmsf_yWrgLFk9Q3LHja2-fLnUJ6nEhAHQpurE1HDLIzW2oaGuUZMGhSegrDkFVv6yVzzk5eoJeSHxoOSwg",
+                    "width": 3024
+                }
+            ],
+            "place_id": "ChIJvwfK2gSqQjQR6VtV9PbPzD0",
+            "plus_code": {
+                "compound_code": "2HM8+55 Xinyi District, Taipei City, Taiwan",
+                "global_code": "7QQ32HM8+55"
+            },
+            "reference": "ChIJvwfK2gSqQjQR6VtV9PbPzD0",
+            "scope": "GOOGLE",
+            "types": [
+                "point_of_interest",
+                "establishment"
+            ],
+            "vicinity": "Xinyi District"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 25.0329636,
+                    "lng": 121.5654268
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0342836802915,
+                        "lng": 121.5667758302915
+                    },
+                    "southwest": {
+                        "lat": 25.0315857197085,
+                        "lng": 121.5640778697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+            "id": "9bd9ffc465378adc9fb45176c803a47dd3b98043",
+            "name": "\u5929\u8cdc\u4e8b\u696d\u6709\u9650\u516c\u53f8",
+            "place_id": "ChIJByQRy7arQjQRQd6kGQoQFGA",
+            "reference": "ChIJByQRy7arQjQRQd6kGQoQFGA",
+            "scope": "GOOGLE",
+            "types": [
+                "point_of_interest",
+                "establishment"
+            ],
+            "vicinity": "\u53f0\u5317\u5e02 \u6587\u5c71\u5340\u516c\u925e1\u865f1\u6a13"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 25.0329636,
+                    "lng": 121.5654268
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0342836802915,
+                        "lng": 121.5667758302915
+                    },
+                    "southwest": {
+                        "lat": 25.0315857197085,
+                        "lng": 121.5640778697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+            "id": "0f5a4fef42deda8dc674db4d3fc080f432adf0c3",
+            "name": "\u6620\u50cf\u76d2\u6709\u9650\u516c\u53f8",
+            "place_id": "ChIJByQRy7arQjQRdMSZc2RPTas",
+            "reference": "ChIJByQRy7arQjQRdMSZc2RPTas",
+            "scope": "GOOGLE",
+            "types": [
+                "point_of_interest",
+                "establishment"
+            ],
+            "vicinity": "\u53f0\u5317\u5e02 \u6587\u5c71\u5340\u7f85\u65af\u798f\u8def-->\u53f0\u5317\u90ca\u5340\u4e94\u6bb5160\u865f7\u6a13"
+        }
+    ],
+    "status": "OK"
+}
+
+
+INFO: close the client socket
+INFO: Jaquez recieved: ss
+
+INFO: Sending message back to client: ? ss
+
+INFO: close the client socket
+INFO: Jaquez recieved: WHATSAT melody.cs.ucla.edu 10 5
+
+INFO: Attempting to retrieve places at location +25.032969,+121.565414
+INFO: Successfully retrieved 20 place(s) from API
+INFO: Sending message back to client: AT Jaquez -29177619.311910868 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+{
+    "html_attributions": [],
+    "next_page_token": "CqQCEgEAANhqQKf9njHgL1IE_Q_vCtBPIG5eP_EkuxjN-fuGkfm1PBS3H2og816Eio1df26UkzOWBPXylB991qptI5RHBYUTO8SHc88FV1tdvGeibVbeoX9WfTqMnaYaXLdGUmjYahmnTqZmgEOxweFxQwwYUU6qxdTKpkj227lHI_3Rtnro9M-3Mlqu6VIMQhsKwSQtwoWErpkpGoRwS7LgvDoY-BDdS86X2cG4PRIzI7CjSh4U_7IH_t2ociQxs7N8fhtgu17p4P5FZBo-HlVmkHjokX8rPujumnC6Ckh5T2Yx6mAlBR5mATK2usHQ-MLwsvfPsQlLafBEElvU8__ws4xY1MnVoOrTqz4GxrKzDzHX-a33sW5M0ZBp0R9cIHynq-biuhIQpH4gs0OLeCeuoMSDxUCM4BoUuXlTvakFS0jVeLDOhF-sV1xmHdk",
+    "results": [
+        {
+            "geometry": {
+                "location": {
+                    "lat": 25.0329663,
+                    "lng": 121.5654804
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0343152802915,
+                        "lng": 121.5668294302915
+                    },
+                    "southwest": {
+                        "lat": 25.0316173197085,
+                        "lng": 121.5641314697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png",
+            "id": "1b154b1d55c9bc8eb459e7ac010045c656b233fe",
+            "name": "Section 5, Xinyi Road",
+            "place_id": "ChIJMbcny7arQjQRJEUr-dV-UFo",
+            "reference": "ChIJMbcny7arQjQRJEUr-dV-UFo",
+            "scope": "GOOGLE",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 25.0329694,
+                    "lng": 121.5654177
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0343466802915,
+                        "lng": 121.5667666302915
+                    },
+                    "southwest": {
+                        "lat": 25.0316487197085,
+                        "lng": 121.5640686697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+            "id": "7d9b2f6f1c84fd7b3f48d6b2bf8436bb533b9379",
+            "name": "\u6e05\u6c38\u8cbf\u6613\u80a1\u4efd\u6709\u9650\u516c\u53f8",
+            "opening_hours": {
+                "open_now": false
+            },
+            "place_id": "ChIJqXZDo3CuQjQRd7ZddROM1ek",
+            "plus_code": {
+                "compound_code": "2HM8+55 Taipei, Taiwan",
+                "global_code": "7QQ32HM8+55"
+            },
+            "reference": "ChIJqXZDo3CuQjQRd7ZddROM1ek",
+            "scope": "GOOGLE",
+            "types": [
+                "point_of_interest",
+                "establishment"
+            ],
+            "vicinity": "1\u6a13, No. 27\u865f, \u884c\u7fa9\u8def154\u5df7, \u5317\u6295\u5340"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 25.0329636,
+                    "lng": 121.5654269
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0342836802915,
+                        "lng": 121.5667759302915
+                    },
+                    "southwest": {
+                        "lat": 25.0315857197085,
+                        "lng": 121.5640779697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+            "id": "17a98c63e3f34f887c80271b86a35d5e3e2bc112",
+            "name": "\u53f0\u5317\u5e02",
+            "photos": [
+                {
+                    "height": 4032,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/105410424809052519023\">\u7c21\u660e\u6708</a>"
+                    ],
+                    "photo_reference": "CmRaAAAAnTXLX7svLvrTqT8lFropLrHYicy3Lqny0KSSfiq9rDnAlUPk2FRlmKEyZE4VzrtsctbJn8afy5_k3BIWa4aZJxCxiz6S2XvtTlV7nQC4-Xu72vGYXvTdJWkK4bUMG8HhEhDgdldea-dIB7T0GNik4wCEGhQ5n62tb_NWPG5wAltw1626qPBkrg",
+                    "width": 3024
+                }
+            ],
+            "place_id": "ChIJvwfK2gSqQjQR6VtV9PbPzD0",
+            "plus_code": {
+                "compound_code": "2HM8+55 Xinyi District, Taipei City, Taiwan",
+                "global_code": "7QQ32HM8+55"
+            },
+            "reference": "ChIJvwfK2gSqQjQR6VtV9PbPzD0",
+            "scope": "GOOGLE",
+            "types": [
+                "point_of_interest",
+                "establishment"
+            ],
+            "vicinity": "Xinyi District"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 25.0329636,
+                    "lng": 121.5654268
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0342836802915,
+                        "lng": 121.5667758302915
+                    },
+                    "southwest": {
+                        "lat": 25.0315857197085,
+                        "lng": 121.5640778697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+            "id": "9bd9ffc465378adc9fb45176c803a47dd3b98043",
+            "name": "\u5929\u8cdc\u4e8b\u696d\u6709\u9650\u516c\u53f8",
+            "place_id": "ChIJByQRy7arQjQRQd6kGQoQFGA",
+            "reference": "ChIJByQRy7arQjQRQd6kGQoQFGA",
+            "scope": "GOOGLE",
+            "types": [
+                "point_of_interest",
+                "establishment"
+            ],
+            "vicinity": "\u53f0\u5317\u5e02 \u6587\u5c71\u5340\u516c\u925e1\u865f1\u6a13"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 25.0329636,
+                    "lng": 121.5654268
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0342836802915,
+                        "lng": 121.5667758302915
+                    },
+                    "southwest": {
+                        "lat": 25.0315857197085,
+                        "lng": 121.5640778697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+            "id": "0f5a4fef42deda8dc674db4d3fc080f432adf0c3",
+            "name": "\u6620\u50cf\u76d2\u6709\u9650\u516c\u53f8",
+            "place_id": "ChIJByQRy7arQjQRdMSZc2RPTas",
+            "reference": "ChIJByQRy7arQjQRdMSZc2RPTas",
+            "scope": "GOOGLE",
+            "types": [
+                "point_of_interest",
+                "establishment"
+            ],
+            "vicinity": "\u53f0\u5317\u5e02 \u6587\u5c71\u5340\u7f85\u65af\u798f\u8def-->\u53f0\u5317\u90ca\u5340\u4e94\u6bb5160\u865f7\u6a13"
+        }
+    ],
+    "status": "OK"
+}
+
+
+INFO: close the client socket
+INFO: Jaquez recieved: dsdff
+
+INFO: Sending message back to client: ? dsdff
+
+INFO: close the client socket
+INFO: Jaquez recieved: WHATSAT kiwi.cs.ucla.edu 10 2
+
+INFO: Sending message back to client: ? WHATSAT kiwi.cs.ucla.edu 10 2
+
+INFO: close the client socket
+INFO: Jaquez recieved: IAMAT kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+
+INFO: Error connecting to server Hill
+INFO: Error connecting to server Singleton
+INFO: Sending message back to client: AT Jaquez -429177463.07583 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: close the client socket
+INFO: Jaquez recieved: WHATSAT kiwi.cs.ucla.edu 10 2
+
+INFO: Attempting to retrieve places at location +25.033972,+121.526680
+INFO: Successfully retrieved 3 place(s) from API
+INFO: Sending message back to client: AT Jaquez -429177463.07583 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+{
+    "html_attributions": [],
+    "results": [
+        {
+            "geometry": {
+                "location": {
+                    "lat": 25.0340429,
+                    "lng": 121.5266248
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0353886802915,
+                        "lng": 121.5279925302915
+                    },
+                    "southwest": {
+                        "lat": 25.0326907197085,
+                        "lng": 121.5252945697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png",
+            "id": "2c8f7a2de7b4405e3b174747cc7a6c30f73aa6e8",
+            "name": "No. 2, Lane 86, Section 2, Xinyi Road",
+            "place_id": "ChIJ88wlv4KpQjQRDw1lRLJ7sgk",
+            "reference": "ChIJ88wlv4KpQjQRDw1lRLJ7sgk",
+            "scope": "GOOGLE",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 25.033964,
+                    "lng": 121.526653
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0354058302915,
+                        "lng": 121.5280567302915
+                    },
+                    "southwest": {
+                        "lat": 25.0327078697085,
+                        "lng": 121.5253587697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+            "id": "d20c429c50bfc23b0aaf2c666ace4f844ae7e741",
+            "name": "\u53f0\u7063\u65b0\u805e\u8a18\u8005\u5354\u6703",
+            "place_id": "ChIJsy1Nv4KpQjQRXN-DpkiLBY0",
+            "plus_code": {
+                "compound_code": "2GMG+HM Da\u2019an District, Taipei City, Taiwan",
+                "global_code": "7QQ32GMG+HM"
+            },
+            "reference": "ChIJsy1Nv4KpQjQRXN-DpkiLBY0",
+            "scope": "GOOGLE",
+            "types": [
+                "point_of_interest",
+                "establishment"
+            ],
+            "vicinity": "No. 88, Section 2, Xinyi Road, Da\u2019an District"
+        }
+    ],
+    "status": "OK"
+}
+
+
+INFO: close the client socket
+INFO: Jaquez recieved: ddd
+INFO: Sending message back to client: ? ddd
+INFO: close the client socket
+INFO: Jaquez recieved: dsjfn
+
+INFO: Sending message back to client: ? dsjfn
+
+INFO: close the client socket

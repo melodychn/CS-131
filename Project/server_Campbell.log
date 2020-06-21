@@ -1,0 +1,61 @@
+INFO: Initialize log file for server Campbell
+INFO: starting up Campbell server...
+INFO: Campbell recieved: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Received propagated message...
+INFO: New data for client Singleton... propagate new data...
+INFO: Campbell send to Smith: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Closing connection to Smith
+INFO: Campbell send to Singleton: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Closing connection to Singleton
+INFO: close the client socket
+INFO: Campbell recieved: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Campbell recieved: AT Singleton -229179858.09470892 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Campbell recieved: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Updating data for client Jaquez... and propagating new data...
+INFO: Campbell send to Smith: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+INFO: Closing connection to Smith
+INFO: Campbell send to Singleton: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+INFO: Closing connection to Singleton
+INFO: close the client socket
+INFO: Campbell recieved: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Campbell recieved: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Updating data for client Singleton... and propagating new data...
+INFO: Campbell send to Smith: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Closing connection to Smith
+INFO: Campbell send to Singleton: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Closing connection to Singleton
+INFO: close the client socket
+INFO: Campbell recieved: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Campbell recieved: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Received propagated message...
+INFO: New data for client Singleton... propagate new data...
+INFO: Campbell send to Smith: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Closing connection to Smith
+INFO: Campbell send to Singleton: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Closing connection to Singleton
+INFO: close the client socket
+INFO: Campbell recieved: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client melody.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket

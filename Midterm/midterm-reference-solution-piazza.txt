@@ -1,0 +1,109 @@
+Midterm reference solution
+Hello, class,
+We're still grading midterm but it will be finished soon. Let me write down the solution for your reference.
+This is not the only solution. And I think other TAs may post their parts later.
+Question 1
+"Explain each of the diagnostics": for (a) and (b), just rephrase the error message; for (c), you need to explain how OCaml infers this type.
+"Propose a minimal extension": there are multiple possible extensions. I didn't deduct any points if your extension is not minimal because most students just said to remove static type checking for (a) and (c) and I don't want to give them all 0. However, you cannot get full points if you changed the program instead of OCaml grammar.
+"Give a downside": I give points to most of you as long as your answer is not very wrong. However, some of your answers have flaws. Please refer to my comments below.
+a) Explanation: (print_endline "OK") yields a unit but "BAD" is a string. The then-clause and else-clause should yield the same type in OCaml.
+Extension1: Let print_endline return the argument / the string it prints.
+Note: There is no ambiguity issue. Neither generality issue since the function itself is not polymorphic at all.
+Downside: Sometimes we only want to print something when a if-branch hits. After this extension, we must write an else block after it.
+
+Extension2: Let if statement accepts different types for then and else block.
+Extension3: Let OCaml automatically apply the function through else statement.
+The downside for these 2 exts are obvious: it breaks the whole type system and makes OCaml like Python.
+
+b) Explanation: "a" is define by "let" which is not visible in its own definition. Also, there is a self-referring type issue.
+Extension: Let every function be able to call itself recursively, i.e. there is no need to write "rec". Just like C++ or python.
+Note: It is a little tricky to talk about the downside. There is no ambiguity issue. It does not prevent you shadowing the function because "let rec f f = f" works even in the original OCaml. Actually, another ML-like language -- Haskell -- does not have "rec" at all and there is no problem with it.
+Downside: For some technical reason, OCaml compiler needs to do extra work to tell whether some functions are mutual recursive (I don't know what exactly it is), i.e. "rec" is just added to make the current compiler happy. There is no real downside for language design.
+PS: if you did this after Q2, you will find there is a recursive type problem that the previous extension does not solve. This part is not given any grades.
+
+c) Explanation: There is a self-recursive type issue.
+In the second pattern, assume "b" has type 'b, then the result should have type 'b list list.
+Thus, in the third pattern, we have [[c]]: 'b and c: 'b list list.
+Which reduces to 'c = 'c list list list list.
+Note: Just inferring the return value has type 'a list list from the first 2 cases and 'c list list list list from the last one is not enough. It is necessary to explain why they are incompatible.
+Extension: Let OCaml accept recursive type, i.e. enabling "#rectypes;;" by default.
+Downside: most of the case self-recursive types are errors instead of designed behaviors, so this extension makes type diagnostics less readable and maybe hide some bugs.
+Note: some answers said OCaml could ignore the level of lists or treat every 'a list list as equivalent to 'a. This is not feasible and will breaks the whole type system.
+Question 2
+First one is invalid, second one is valid. Lets first assume that the type of a is ('a -> 'b) -> 'c, because the only argument (x) is a function. Next, we call x with a, so the first argument of x ('a) must be the same as the type of the function (('a -> 'b) -> 'c). These can't be the same, as 'a appears in both and changing one type would change the other as well, which in turn would change the first type, and so on. In short, the type of x depends on the type of a and the type of a depends on the type of x, so we have a problem. This part of the question was worth 2 points, and one point was given for figuring out which function had a problem and another point was given for an explanation of why that happens. Many people just copied the error message from OCaml without explaining the meaning, and that was not enough to get a point.
+Next, the question asked you to give a use of the valid function. The function is basically a pipeline operator and it has the same idea as |> in OCaml, except that the given function is not an infix operator. With this function, we can sometimes make our code a bit cleaner, as we can have a long expression followed by what we do with the result. The functions will then be in the order that they are applied, which might be easier to read than if the function names were always added to the beginning. A trivial example for how to call this function could be "b (1 + 2) print_int", so we first evaluate 1+2 and then pass the result to print_int. This part was worth 2 points as well. As it's not that clear what a "use of a function" means, the grading was quite lenient. You got the points if you showed some reasonable way to call this function. I've only deducted points if the use case doesn't seem to make any sense (it might compile, but I wasn't able to figure out what the meaning of that function call would be).
+Last part of the question was to simplify and shorten the valid function. First, it's not a recursive function, so we get rid of the rec keyword. Then we can get rid of the lambda functions, as it's just the same thing as having multiple arguments for one function. The resulting definition is "let b x y = y x;;". Somewhat common mistake was to change the order of arguments x and y to get rid of the last argument (let b y x = y x, which was simplified to let b y = y). Note that this simplification changes the meaning of the original function, so points were deducted for it. This simplification doesn't really make much sense in the first place, as b would just return whatever was given to it, so there's no point in having b anymore. We could just remove it altogether to make the function calls even simpler.
+Question 3
+Solution 1:
+let make_generous_matcher grammar = 
+  fun acceptors frag ->
+    let rec helper grammar acceptors frag = 
+      match acceptors with
+        | [] -> None
+        | h::t -> 
+          match make_matcher grammar h frag with
+            | Some x -> Some x
+            | None -> helper grammar t frag
+    in helper grammar acceptors frag
+Solution 2: 
+let make_generous_matcher grammar acceptors frag = 
+  List.find_map (fun acceptor -> make_matcher grammar acceptor frag) acceptors
+Question 4
+One way to solve this is to split the list in odd and even elements, reverse the even elements and combine the lists back together:
+let rec split_list = function
+  | [] -> [],[]
+  | [x] -> [x],[]
+  | x::y::tail -> let odds,evens = split_list tail in x::odds, y::evens
+
+let rec join_lists odds evens = match odds,evens with
+  | [], _ -> []
+  | oh::ot, [] -> [oh]
+  | oh::ot, eh::et -> oh::eh::(join_lists ot et)
+
+let revhalf l =
+  let odds, evens = split_list l in
+  let rev_evens = List.rev evens in
+  join_lists odds rev_evens
+A common mistake was to reverse the even-valued elements. The part of the question saying "counting from 1" should make it clear that it is talking about indices, as that part wouldn't make much sense if we wanted to reverse the even-valued elements. However, I only deducted one point if you correctly reversed the even-valued elements. Some solutions separated the even-valued elements but then combined the lists as if they had even indices, which cost you more points. You have to at least use the same definition for "even-numbered elements" throughout your answer. The grading was: 5pts for finding the even elements, 5pts for reversing them correctly, 5pts for combining the elements back to the correct positions.
+Question 5
+5a. There are countless possible answers, the tricky part is that, { X } means '{' X '}' while {X} means 0 or N times X.
+Option is easy to handle (split one RHS into two), repeating is also easy.
+Let's say we have:
+X = {Y}
+In general, there are two ways to get rid of it, left-recursion or right-recursion (how to express "empty" is up to you, as long as you make me understood):
+X = epsilon | Z
+Z = Z Y
+or
+X = epsilon | Z
+Z = Y Z
+Frequently-seen error: not knowing how to convert {X}, messing up { X } and {X}, missing out a few places to be converted.
+We know it is tricky to have {X} and { X }, but it comes from real-world grammar.
+5b. depending on a. If your grammar is left-recursive ({X} part) then HW2 parser fails, otherwise it is fine.
+Frequently-seen error: focusing too much on actual implementation, not talking about grammar, talking about OCaml instead.
+5c. No ambiguity. ')' is enough. Please mention how you came to this conclusion.
+5d. No ambiguity. The parse trees remain the same but the leaf, no misunderstanding along the way. Please mention how you came to this conclusion.
+5e. Ambiguity. e.g. nested try. It is the best if you come up with an example for illustration.
+Frequently-seen error: give conclusion but no proof; misunderstanding what means ambiguity, etc.
+Re-emphasize: you can prove the ambiguity exists, by starting from the SAME starting symbol, having two different parse-trees that both referring to the SAME fragment.
+Question 6
+I don't want to give any points to a generic, abstract description. Because this is a concrete problem. Like, generally, multiple threading writes to the same variable will lead to race condition. However, if we focuses on this program:
+volatile boolean flag = false;
+public void write() {flag = true;}
+    Then, there is no race condition because we don't care who set it to true.
+Some answers say the error is that the thread can be awoken by other threads. This is intended behavior, because in this case, a thread can only be awoken by another thread.
+Some answers say multiple threads can be awoken at the same time. This is also intended behavior. Because notifyAll is supposed to "Wakes up all threads that are waiting on this object's monitor" (copied from Oracle doc)
+Also, notifyAll() only wakes up threads currently waiting on it. If a thread called wait() after notifyAll(), it is supposed to block.
+Some answers say that flag is a thread local variable. This is incorrect because a thread is not waiting on itself's flag. It's waiting on a shared object's flag.
+If a thread calls notifyAll() right after another calls wait(), there will be no thread waiting. This is intended behavior because wait() is used to wait for some event to happen, not used to waste up time.
+Please note that "synchronized" puts locks on the whole object, not just the function. "First, it is not possible for two invocations of synchronized methods on the same object to interleave" (copied from Oracle doc)
+(a) Answer1: If wait() and notifyAll() are called at the same time, then it may happen that right after notifyAll() set flag=false, wait() set it back to true.
+Thus, all threads waiting before will not be awoken.
+Answer2: while(flag) will be opted out and there will be an infinite loop.
+Note1: at least 3 threads are needed to trigger answer1. Some students argue that notifyAll() called right after wait() will vanish wait(), but this is expected behaviour. Therefore, there will be some points deduction if you state "2 threads" in answer1. Answer2 can be observed by 2 threads.
+(b) First, all waiting threads are wasting CPU time to test flag. Second, flag may be cached and thus notifyAll() will not immediately awake waiting threads.
+(c) No. If synchronized is put before both wait() and notifyAll(), there will be a dead lock. If it is put only before notifyAll(), then it takes no effect.
+Question 7
+(a) For the first, 32 KiB is too small for a typical large Java server app. More importantly, you still need more cache space to store other variables and Java interpreter. Setting MLIM as 32 KiB cannot fully utilize the fast speed of L1 I cache. 
+(b) This question discusses the comparison between discarding some compiled code or keeping all in the memory/cache. 
+4 MiB would make more sense if the program runs in phases. For each phase, this machine code cache is filled with machine code focusing on this phase. This encourages the JIT compiler to keep code size down to L2 cache and leverages the L2 cache nicely. 
+48 MiB would make more sense when the program is large with few clear hotspots, a lot of random data accesses, etc. In this scenario, moving the whole machine code cache to the main memory makes more sense. 

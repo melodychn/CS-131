@@ -1,0 +1,537 @@
+
+Testing Platform Information
+
+1) lnxsrv09
+
+java --version
+output:
+java 13.0.2 2020-01-14witht 
+Java(TM) SE Runtime Environment (build 13.0.2+8)
+Java HotSpot(TM) 64-Bit Server VM (build 13.0.2+8, mixed mode, sharing)
+
+cpu model name: 
+Intel(R) Xeon(R) CPU E5-2640 v2 @ 2.00GHz
+
+/proc/meminfo:
+MemTotal:       65755720 kB
+MemFree:        47627500 kB
+MemAvailable:   63628480 kB
+Buffers:          210484 kB
+Cached:         15760620 kB
+
+
+2) lnxsrv06
+
+java --version
+output:
+java 13.0.2 2020-01-14
+Java(TM) SE Runtime Environment (build 13.0.2+8)
+Java HotSpot(TM) 64-Bit Server VM (build 13.0.2+8, mixed mode, sharing)
+
+cpu model name: 
+Intel(R) Xeon(R) CPU E5620  @ 2.40GHz
+
+/proc/meminfo:
+MemTotal:       65794548 kB
+MemFree:          260152 kB
+MemAvailable:   64009880 kB
+Buffers:          104848 kB
+Cached:         63570664 kB
+
+Comparison:
+lnxsrv09 has cpu model that is v2 @ 2.00GHz in contrast to lnxsrv06 which has cpu model that is not v2 @ 2.40GHz. Thus, cpu on lnxsrv06 is slightly faster than cpu of lnxsrv09. Aside from the cpu model, lnxsrv09 has 31 processors in contrast to lnxsrv06 which only has 15 processors. The more processors you have the more threads you can run at once, thus the number of processors may affect our results shown later. Comparing the meminfo of the two servers, we can see that the total memory size is very similar, but the total free memory differs in that lnxsrv09 has significantly more free memory than lnxsrv06. The more free memory available means more memory can be cached which increases access speed, which can increase the speed of our running program. 
+
+---------------------------------------------------------
+
+Results 
+
+1) Null
+
+1 thread 100000000 transitions 5 size -----------------------------
+
+lnxsrv06
+
+Total time 1.45098 s real, 1.44941 s CPU
+Average swap time 14.5098 ns real, 14.4941 ns CPU
+
+real	0m1.598s
+user	0m1.600s
+sys	0m0.052s
+
+lnxsrv09
+
+Total time 1.83573 s real, 1.83381 s CPU
+Average swap time 18.3573 ns real, 18.3381 ns CPU
+
+real	0m1.984s
+user	0m2.029s
+sys	0m0.055s
+
+1 thread 100000000 transitions 100 size -----------------------------
+
+lnxsrv06
+
+Total time 1.39010 s real, 1.38833 s CPU
+Average swap time 13.9010 ns real, 13.8833 ns CPU
+
+real	0m1.517s
+user	0m1.545s
+sys	0m0.049s
+
+lnxsrv09
+
+Total time 1.96500 s real, 1.96200 s CPU
+Average swap time 19.6500 ns real, 19.6200 ns CPU
+
+real	0m2.120s
+user	0m2.161s
+sys	0m0.066s
+
+1 thread 100000000 transitions 300 size -----------------------------
+
+lnxsrv06
+
+Total time 1.39842 s real, 1.39688 s CPU
+Average swap time 13.9842 ns real, 13.9688 ns CPU
+
+real	0m1.543s
+user	0m1.556s
+sys	0m0.045s
+
+lnxsrv09
+
+Total time 1.58340 s real, 1.57698 s CPU
+Average swap time 15.8340 ns real, 15.7698 ns CPU
+
+real	0m1.753s
+user	0m1.791s
+sys	0m0.056s
+
+8 thread 100000000 transitions 5 size -----------------------------
+
+lnxsrv06
+
+Total time 0.314836 s real, 2.20337 s CPU
+Average swap time 25.1869 ns real, 22.0337 ns CPU
+
+real	0m0.460s
+user	0m2.359s
+sys	0m0.050s
+
+lnxsrv09
+
+Total time 0.361578 s real, 2.65922 s CPU
+Average swap time 28.9262 ns real, 26.5922 ns CPU
+
+real	0m0.568s
+user	0m2.875s
+sys	0m0.088s
+
+8 thread 100000000 transitions 100 size -----------------------------
+
+lnxsrv06
+
+Total time 0.352456 s real, 2.43875 s CPU
+Average swap time 28.1965 ns real, 24.3875 ns CPU
+
+real	0m0.485s
+user	0m2.612s
+sys	0m0.052s
+
+lnxsrv09
+
+Total time 0.381356 s real, 2.79105 s CPU
+Average swap time 30.5085 ns real, 27.9105 ns CPU
+
+real	0m0.554s
+user	0m3.013s
+sys	0m0.066s
+
+8 thread 100000000 transitions 300 size -----------------------------
+
+lnxsrv06
+
+Total time 0.402747 s real, 2.79799 s CPU
+Average swap time 32.2198 ns real, 27.9799 ns CPU
+
+real	0m0.545s
+user	0m2.953s
+sys	0m0.063s
+
+lnxsrv09
+
+Total time 0.339443 s real, 2.44599 s CPU
+Average swap time 27.1555 ns real, 24.4599 ns CPU
+
+real	0m0.492s
+user	0m2.626s
+sys	0m0.084s
+
+40 thread 100000000 transitions 5 size -----------------------------
+
+lnxsrv06
+
+Total time 0.534778 s real, 7.10793 s CPU
+Average swap time 213.911 ns real, 71.0793 ns CPU
+
+real	0m0.683s
+user	0m7.298s
+sys	0m0.062s
+
+lnxsrv09
+
+Total time 0.342635 s real, 4.73249 s CPU
+Average swap time 137.054 ns real, 47.3249 ns CPU
+
+real	0m0.507s
+user	0m4.937s
+sys	0m0.104s
+
+40 thread 100000000 transitions 100 size -----------------------------
+
+lnxsrv06
+
+Total time 0.502640 s real, 6.56640 s CPU
+Average swap time 201.056 ns real, 65.6640 ns CPU
+
+real	0m0.635s
+user	0m6.744s
+sys	0m0.076s
+
+lnxsrv09
+
+Total time 0.357507 s real, 4.21364 s CPU
+Average swap time 143.003 ns real, 42.1364 ns CPU
+
+real	0m0.538s
+user	0m4.468s
+sys	0m0.083s
+
+40 thread 100000000 transitions 300 size -----------------------------
+
+lnxsrv06
+
+Total time 0.772204 s real, 10.6149 s CPU
+Average swap time 308.881 ns real, 106.149 ns CPU
+
+real	0m0.913s
+user	0m10.822s
+sys	0m0.051s
+
+lnxsrv09
+
+Total time 0.492159 s real, 6.26163 s CPU
+Average swap time 196.864 ns real, 62.6163 ns CPU
+
+real	0m0.651s
+user	0m6.512s
+sys	0m0.080s
+
+20 thread 100000000 transitions 5 size -----------------------------
+
+lnxsrv06
+
+Total time 0.356227 s real, 4.54165 s CPU
+Average swap time 71.2454 ns real, 45.4165 ns CPU
+
+real	0m0.493s
+user	0m4.723s
+sys	0m0.044s
+
+lnxsrv09
+
+Total time 0.408588 s real, 4.80535 s CPU
+Average swap time 81.7177 ns real, 48.0535 ns CPU
+
+real	0m0.637s
+user	0m5.056s
+sys	0m0.095s
+
+
+20 thread 100000000 transitions 100 size -----------------------------
+
+lnxsrv06
+
+Total time 0.290647 s real, 3.43238 s CPU
+Average swap time 58.1294 ns real, 34.3238 ns CPU
+
+real	0m0.437s
+user	0m3.582s
+sys	0m0.074s
+
+lnxsrv09
+
+Total time 0.383178 s real, 4.50053 s CPU
+Average swap time 76.6356 ns real, 45.0053 ns CPU
+
+real	0m0.524s
+user	0m4.719s
+sys	0m0.066s
+
+20 thread 100000000 transitions 300 size -----------------------------
+
+lnxsrv06
+
+Total time 0.393390 s real, 4.92578 s CPU
+Average swap time 78.6779 ns real, 49.2578 ns CPU
+
+real	0m0.524s
+user	0m5.106s
+sys	0m0.058s
+
+lnxsrv09
+
+Total time 0.412318 s real, 5.01310 s CPU
+Average swap time 82.4635 ns real, 50.1310 ns CPU
+
+real	0m0.579s
+user	0m5.249s
+sys	0m0.069s
+
+
+2) Synchronized 
+
+1 thread 100000000 transitions 5 size -----------------------------
+
+lnxsrv06
+
+Total time 2.38733 s real, 2.37898 s CPU
+Average swap time 23.8733 ns real, 23.7898 ns CPU
+
+real	0m3.342s
+user	0m2.529s
+sys	0m0.078s
+
+lnxsrv09
+
+Total time 2.22250 s real, 2.22159 s CPU
+Average swap time 22.2250 ns real, 22.2159 ns CPU
+
+real	0m2.395s
+user	0m2.440s
+sys	0m0.058s
+
+1 thread 100000000 transitions 100 size -----------------------------
+
+lnxsrv06
+
+Total time 2.97381 s real, 2.97063 s CPU
+Average swap time 29.7381 ns real, 29.7063 ns CPU
+
+real	0m3.119s
+user	0m3.135s
+sys	0m0.055s
+
+lnsrv09
+
+Total time 2.49726 s real, 2.49610 s CPU
+Average swap time 24.9726 ns real, 24.9610 ns CPU
+
+real	0m2.696s
+user	0m2.718s
+sys	0m0.076s
+
+1 thread 100000000 transitions 300 size -----------------------------
+
+lnxsrv06
+
+Total time 2.43167 s real, 2.42986 s CPU
+Average swap time 24.3167 ns real, 24.2986 ns CPU
+
+real	0m2.576s
+user	0m2.593s
+sys	0m0.054s
+
+lnxsrv09
+
+Total time 2.76718 s real, 2.76555 s CPU
+Average swap time 27.6718 ns real, 27.6555 ns CPU
+
+real	0m2.963s
+user	0m2.999s
+sys	0m0.061s
+
+8 thread 100000000 transitions 5 size -----------------------------
+
+lnxsrv06
+
+Total time 23.5286 s real, 82.1066 s CPU
+Average swap time 1882.28 ns real, 821.066 ns CPU
+
+real	0m23.684s
+user	1m15.682s
+sys	0m6.658s
+
+lnxsrv09
+
+Total time 21.5141 s real, 68.7119 s CPU
+Average swap time 1721.13 ns real, 687.119 ns CPU
+
+real	0m21.736s
+user	1m1.714s
+sys	0m7.335s
+
+8 thread 100000000 transitions 100 size -----------------------------
+
+lnxsrv06
+
+Total time 24.8181 s real, 82.2946 s CPU
+Average swap time 1985.45 ns real, 822.946 ns CPU
+
+real	0m24.968s
+user	1m16.867s
+sys	0m5.666s
+
+
+lnxsrv09
+
+Total time 21.2900 s real, 65.3962 s CPU
+Average swap time 1703.20 ns real, 653.962 ns CPU
+
+real	0m21.480s
+user	0m58.425s
+sys	0m7.306s
+
+8 thread 100000000 transitions 300 size -----------------------------
+
+lnxsrv06
+
+Total time 24.2743 s real, 80.6106 s CPU
+Average swap time 1941.94 ns real, 806.106 ns CPU
+
+real	0m24.421s
+user	1m13.982s
+sys	0m6.865s
+
+
+lnxsrv09
+
+Total time 21.6912 s real, 64.8115 s CPU
+Average swap time 1735.29 ns real, 648.115 ns CPU
+
+real	0m21.855s
+user	0m57.276s
+sys	0m7.823s
+
+40 thread 100000000 transitions 5 size -----------------------------
+
+lnxsrv06
+
+Total time 17.1962 s real, 55.5613 s CPU
+Average swap time 6878.48 ns real, 555.613 ns CPU
+
+real	0m17.339s
+user	0m50.671s
+sys	0m5.126s
+
+
+lnxsrv09
+
+Total time 17.7470 s real, 39.7198 s CPU
+Average swap time 7098.82 ns real, 397.198 ns CPU
+
+real	0m17.969s
+user	0m39.181s
+sys	0m0.905s
+
+40 thread 100000000 transitions 100 size -----------------------------
+
+lnxsrv06
+
+Total time 19.3570 s real, 61.4940 s CPU
+Average swap time 7742.79 ns real, 614.940 ns CPU
+
+real	0m19.490s
+user	0m57.786s
+sys	0m3.973s
+
+lnxsrv09
+
+Total time 13.3151 s real, 27.3996 s CPU
+Average swap time 5326.02 ns real, 273.996 ns CPU
+
+real	0m13.468s
+user	0m26.884s
+sys	0m0.829s
+
+40 thread 100000000 transitions 300 size -----------------------------
+
+lnxsrv06
+
+Total time 11.2368 s real, 31.6320 s CPU
+Average swap time 4494.73 ns real, 316.320 ns CPU
+
+real	0m11.384s
+user	0m30.137s
+sys	0m1.754s
+
+
+lnxsrv09
+
+Total time 12.1884 s real, 24.2743 s CPU
+Average swap time 4875.38 ns real, 242.743 ns CPU
+
+real	0m12.343s
+user	0m23.726s
+sys	0m0.869s
+
+20 thread 100000000 transitions 5 size -----------------------------
+
+lnxsrv06
+
+Total time 11.2368 s real, 31.6320 s CPU
+Average swap time 4494.73 ns real, 316.320 ns CPU
+
+real	0m11.384s
+user	0m30.137s
+sys	0m1.754s
+
+lnxsrv09
+
+Total time 16.8824 s real, 39.2155 s CPU
+Average swap time 3376.48 ns real, 392.155 ns CPU
+
+real	0m17.056s
+user	0m38.094s
+sys	0m1.440s
+
+20 thread 100000000 transitions 100 size -----------------------------
+
+lnxsrv06
+
+Total time 19.0681 s real, 60.9004 s CPU
+Average swap time 3813.62 ns real, 609.004 ns CPU
+
+real	0m19.200s
+user	0m54.570s
+sys	0m6.584s
+
+
+lnxsrv09
+
+Total time 13.1027 s real, 29.0668 s CPU
+Average swap time 2620.55 ns real, 290.668 ns CPU
+
+real	0m13.295s
+user	0m28.081s
+sys	0m1.343s
+
+20 thread 100000000 transitions 300 size -----------------------------
+
+lnxsrv06
+
+Total time 20.1476 s real, 65.1255 s CPU
+Average swap time 4029.51 ns real, 651.255 ns CPU
+
+real	0m20.297s
+user	1m0.277s
+sys	0m5.123s
+
+lnxsrv09
+
+Total time 12.0905 s real, 25.3017 s CPU
+Average swap time 2418.10 ns real, 253.017 ns CPU
+
+real	0m12.273s
+user	0m24.414s
+sys	0m1.215s

@@ -1,0 +1,72 @@
+Unsynchronized 1 thread
+Total time 1.70784 s real, 1.70685 s CPU
+Average swap time 17.0784 ns real, 17.0685 ns CPU
+Total time 1.84756 s real, 1.84640 s CPU
+Average swap time 18.4756 ns real, 18.4640 ns CPU
+Total time 1.89528 s real, 1.89218 s CPU
+Average swap time 18.9528 ns real, 18.9218 ns CPU
+
+Unsynchronized 8 thread
+Total time 5.46539 s real, 42.4882 s CPU
+Average swap time 437.231 ns real, 424.882 ns CPU
+output sum mismatch (-14338 != 0)
+Total time 4.04096 s real, 31.3691 s CPU
+Average swap time 323.277 ns real, 313.691 ns CPU
+output sum mismatch (-53873 != 0)
+Total time 3.14176 s real, 24.4637 s CPU
+Average swap time 251.340 ns real, 244.637 ns CPU
+output sum mismatch (-31072 != 0)
+
+Unsynchronized 40 thread
+Total time 4.71133 s real, 88.5079 s CPU
+Average swap time 1884.53 ns real, 885.079 ns CPU
+output sum mismatch (-16098 != 0)
+Total time 3.15245 s real, 60.3603 s CPU
+Average swap time 1260.98 ns real, 603.603 ns CPU
+output sum mismatch (-66834 != 0)
+Total time 2.29522 s real, 40.7008 s CPU
+Average swap time 918.086 ns real, 407.008 ns CPU
+output sum mismatch (-51281 != 0)
+
+Unsynchronized 20 thread
+Total time 3.55228 s real, 54.2280 s CPU
+Average swap time 710.457 ns real, 542.280 ns CPU
+output sum mismatch (125699 != 0)
+Total time 3.45637 s real, 52.7835 s CPU
+Average swap time 691.274 ns real, 527.835 ns CPU
+output sum mismatch (-72579 != 0)
+Total time 2.50491 s real, 36.4643 s CPU
+Average swap time 500.982 ns real, 364.643 ns CPU
+output sum mismatch (-44767 != 0)
+
+AcmeSafe 1 thread
+Total time 2.97520 s real, 2.97399 s CPU
+Average swap time 29.7520 ns real, 29.7399 ns CPU
+Total time 3.14238 s real, 3.14035 s CPU
+Average swap time 31.4238 ns real, 31.4035 ns CPU
+Total time 2.83682 s real, 2.83548 s CPU
+Average swap time 28.3682 ns real, 28.3548 ns CPU
+
+AcmeSafe 8 thread
+Total time 15.6089 s real, 122.616 s CPU
+Average swap time 1248.72 ns real, 1226.16 ns CPU
+Total time 6.82362 s real, 54.0307 s CPU
+Average swap time 545.889 ns real, 540.307 ns CPU
+Total time 3.12655 s real, 23.7273 s CPU
+Average swap time 250.124 ns real, 237.273 ns CPU
+
+AcmeSafe 40 thread
+Total time 10.1904 s real, 199.496 s CPU
+Average swap time 4076.17 ns real, 1994.96 ns CPU
+Total time 4.42853 s real, 81.0718 s CPU
+Average swap time 1771.41 ns real, 810.718 ns CPU
+Total time 3.19631 s real, 62.2056 s CPU
+Average swap time 1278.52 ns real, 622.056 ns CPU
+
+AcmeSafe 20 thread
+Total time 14.2808 s real, 234.426 s CPU
+Average swap time 2856.16 ns real, 2344.26 ns CPU
+Total time 5.55697 s real, 86.5158 s CPU
+Average swap time 1111.39 ns real, 865.158 ns CPU
+Total time 3.73013 s real, 53.8651 s CPU
+Average swap time 746.025 ns real, 538.651 ns CPU

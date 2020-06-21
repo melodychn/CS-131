@@ -1,0 +1,183 @@
+INFO: Initialize log file for server Singleton
+INFO: starting up Singleton server...
+INFO: Singleton recieved: IAMAT kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+
+INFO: Singleton send to Campbell: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Closing connection to Campbell
+INFO: Singleton send to Jaquez: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Closing connection to Jaquez
+INFO: Singleton send to Smith: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Closing connection to Smith
+INFO: Sending message back to client: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Singleton recieved: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: close the client socket
+INFO: Singleton recieved: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Singleton recieved: AT Singleton -229179882.9939778 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Singleton recieved: IAMAT kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+
+INFO: Singleton send to Campbell: AT Singleton -229179858.09470892 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Closing connection to Campbell
+INFO: Singleton send to Jaquez: AT Singleton -229179858.09470892 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Closing connection to Jaquez
+INFO: Singleton send to Smith: AT Singleton -229179858.09470892 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: Closing connection to Smith
+INFO: Sending message back to client: AT Singleton -229179858.09470892 kiwi.cs.ucla.edu +34.068930-118.445127 1820023934.918963997
+INFO: close the client socket
+INFO: Singleton recieved: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Updating data for client Jaquez... and propagating new data...
+INFO: Singleton send to Campbell: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+INFO: Closing connection to Campbell
+INFO: Singleton send to Jaquez: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+INFO: Closing connection to Jaquez
+INFO: Singleton send to Smith: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+INFO: Closing connection to Smith
+INFO: close the client socket
+INFO: Singleton recieved: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Singleton recieved: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Singleton recieved: WHATSAT kiwi.cs.ucla.edu 10 2
+
+INFO: Attempting to retrieve places at location +25.033972,+121.526680
+INFO: Successfully retrieved 3 place(s) from API
+INFO: Sending message back to client: AT Jaquez -329179840.44072914 kiwi.cs.ucla.edu +25.033972+121.526680 1920023934.918963997
+{
+    "html_attributions": [],
+    "results": [
+        {
+            "geometry": {
+                "location": {
+                    "lat": 25.0340429,
+                    "lng": 121.5266248
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0353886802915,
+                        "lng": 121.5279925302915
+                    },
+                    "southwest": {
+                        "lat": 25.0326907197085,
+                        "lng": 121.5252945697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png",
+            "id": "2c8f7a2de7b4405e3b174747cc7a6c30f73aa6e8",
+            "name": "No. 2, Lane 86, Section 2, Xinyi Road",
+            "place_id": "ChIJ88wlv4KpQjQRDw1lRLJ7sgk",
+            "reference": "ChIJ88wlv4KpQjQRDw1lRLJ7sgk",
+            "scope": "GOOGLE",
+            "types": [
+                "route"
+            ]
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 25.033964,
+                    "lng": 121.526653
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 25.0354058302915,
+                        "lng": 121.5280567302915
+                    },
+                    "southwest": {
+                        "lat": 25.0327078697085,
+                        "lng": 121.5253587697085
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png",
+            "id": "d20c429c50bfc23b0aaf2c666ace4f844ae7e741",
+            "name": "\u53f0\u7063\u65b0\u805e\u8a18\u8005\u5354\u6703",
+            "place_id": "ChIJsy1Nv4KpQjQRXN-DpkiLBY0",
+            "plus_code": {
+                "compound_code": "2GMG+HM Da\u2019an District, Taipei City, Taiwan",
+                "global_code": "7QQ32GMG+HM"
+            },
+            "reference": "ChIJsy1Nv4KpQjQRXN-DpkiLBY0",
+            "scope": "GOOGLE",
+            "types": [
+                "point_of_interest",
+                "establishment"
+            ],
+            "vicinity": "No. 88, Section 2, Xinyi Road, Da\u2019an District"
+        }
+    ],
+    "status": "OK"
+}
+
+
+INFO: close the client socket
+INFO: Singleton recieved: IAMAT kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+
+INFO: Singleton send to Campbell: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Closing connection to Campbell
+INFO: Singleton send to Jaquez: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Closing connection to Jaquez
+INFO: Singleton send to Smith: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Closing connection to Smith
+INFO: Sending message back to client: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Singleton recieved: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: close the client socket
+INFO: Singleton recieved: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Singleton recieved: AT Singleton -429179809.0193889 kiwi.cs.ucla.edu +25.033972+121.526680 2020023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client kiwi.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Singleton recieved: IAMAT melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+
+INFO: Singleton send to Campbell: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Closing connection to Campbell
+INFO: Singleton send to Jaquez: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Closing connection to Jaquez
+INFO: Singleton send to Smith: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Closing connection to Smith
+INFO: Sending message back to client: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: close the client socket
+INFO: Singleton recieved: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client melody.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Singleton recieved: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client melody.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket
+INFO: Singleton recieved: AT Singleton -29179766.6354208 melody.cs.ucla.edu +25.032969+121.565414 1620023934.918963997
+INFO: Received propagated message...
+INFO: Already contain data for client melody.cs.ucla.edu
+INFO: Received message already... Stop propagation.
+INFO: close the client socket

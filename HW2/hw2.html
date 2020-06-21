@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>Homework 2. Naive parsing of context free grammars</title>
+<meta charset='UTF-8'>
+<link rel='author' href='mailto:eggert@cs.ucla.edu'>
+<link rel='license' href='copyright.html'>
+</head>
+
+<body>
+
+<h1>Homework 2. Naive parsing of context free grammars</h1>
+
+<h2>Motivation</h2>
+
+<p>You'd like to test grammars that are being proposed as test cases
+for CS 132 projects. One way is to test it on actual CS 132 projects, but those
+projects aren't done yet and anyway you'd like a second opinion in
+case the student projects are incorrect. So you decide to write a
+simple parser generator. Given a grammar in the style of
+<a href='hw1.html'>Homework 1</a>,
+your program will generate a function that is a parser. When this
+parser is given a string whose prefix is a program to parse, it returns the
+corresponding unmatched suffix, or an error indication if no prefix
+of the string is a valid program.</p>
+
+<p>The key notion of this assignment is that of a matcher. A
+<dfn>matcher</dfn> is a function that inspects a given string of
+terminals to
+find a match for a prefix that corresponds to a nonterminal symbol of
+a grammar, and then
+checks whether the match is acceptable by testing whether a given
+acceptor succeeds on the corresponding suffix.
+For example, a matcher
+for <samp>awkish_grammar</samp> below might inspect the
+string <samp>["3";"+";"4";"-"]</samp> and find two possible
+prefixes that match, namely <samp>["3";"+";"4"]</samp>
+and <samp>["3"]</samp>. The matcher will first apply the
+acceptor to the first prefix <samp>["3";"+";"4"]</samp>,
+along with the corresponding suffix
+<samp>["-"]</samp>. If this is accepted, the matcher will return
+whatever the acceptor returns. Otherwise, the matcher will apply
+the acceptor to the second prefix
+<samp>["3"]</samp>, along with the corresponding suffix
+<samp>["+";"4";"-"]</samp>, and will return whatever the acceptor returns.
+If a matcher finds no matching prefixes, it returns the special value
+<samp>None</samp>.</p>
+
+<p>As you can see by mentally executing the
+example, matchers sometimes need to try multiple alternatives and to
+backtrack to a later alternative if an earlier one is a blind
+alley.</p>
+
+<p>An <dfn>acceptor</dfn> is a function that accepts
+a suffix by returning some value wrapped inside the <a
+href='http://caml.inria.fr/pub/docs/manual-ocaml/core.html#hevea_manual17'><samp>Some</samp>
+constructor</a>. The acceptor rejects the suffix by
+returning <samp>None</samp>. For example, the acceptor <samp>(function
+| "+"::t -&gt; Some ("+"::t) | _ -&gt; None)</samp> accepts only
+suffixes beginning with <samp>"+"</samp>. Such an acceptor would cause
+the example matcher to fail on the prefix <samp>["3";"+";"4"]</samp>
+(since the corresponding suffix begins with <samp>"-"</samp>, not
+<samp>"+"</samp>) but it would succeed on the prefix
+<samp>["3"]</samp>.</p>
+
+<p>By convention, an acceptor that is successful
+returns <samp>Some s</samp>, where <samp>s</samp> is a tail of the input
+suffix (because the acceptor may have parsed more of the input, and
+has therefore consumed some of the suffix). This allows the matcher's caller to
+retrieve an indication of where the matched prefix ends (since it ends
+just before
+the suffix starts). Although this behavior is crucial for the internal
+acceptors used by your code, it is not required for top-level
+acceptors supplied by test programs: a top-level acceptor needs only
+to return a <samp>Some <var>x</var></samp> value to succeed.</p>
+
+<p>Whenever there are several rules to try for a nonterminal,
+you should always try them left-to-right. For example,
+<samp>awkish_grammar</samp> below contains this:
+
+<pre><samp>     | Expr -&gt;
+         [[N Term; N Binop; N Expr];
+          [N Term]]
+</samp></pre>
+
+<p>
+and therefore, your matcher should attempt to use the rule "Expr
+&rarr; Term Binop Expr" before attempting to use the simpler rule
+"Expr &rarr; Term".
+</p>
+
+<p>If you can build a matcher, it should be relatively easy to build a
+<dfn>parser</dfn>, which yields a parse tree that corresponds to its
+input fragment.</p>
+
+<h2>Definitions</h2>
+
+<dl>
+
+<dt><dfn>symbol</dfn>, <dfn>right hand side</dfn>, <dfn>rule</dfn></dt>
+<dd>same as in Homework 1.</dd>
+
+<dt><dfn>alternative list</dfn></dt> <dd>A list of right hand sides. It
+corresponds to all of a grammar's rules for a given
+nonterminal symbol. By convention, an empty alternative
+list <samp>[]</samp> is treated as if it were a singleton
+list <samp>[[]]</samp> containing the empty symbol string.</dd>
+
+<dt><dfn>production function</dfn></dt> <dd>A function whose argument is a
+nonterminal value. It returns a grammar's alternative list
+for that nonterminal.</dd>
+
+<dt><dfn>grammar</dfn></dt> <dd>A pair, consisting of a start symbol and a
+production function. The start symbol is a nonterminal value.</dd>
+
+<dt><dfn>fragment</dfn></dt> <dd>a list of terminal symbols, e.g., <samp>["3";
+"+"; "4"; "xyzzy"]</samp>.</dd>
+
+<dt><dfn>acceptor</dfn></dt> <dd>a function whose argument is
+a fragment <var>frag</var>. If the
+fragment is not acceptable, it
+returns <samp>None</samp>; otherwise it returns <samp>Some
+</samp><var>x</var> for some value <var>x</var>.</dd>
+
+<dt><dfn>matcher</dfn></dt> <dd>a curried function with two arguments: an
+acceptor <var>accept</var> and a fragment <var>frag</var>. A matcher matches a
+prefix <var>p</var> of <var>frag</var> such that <var>accept</var>
+(when passed the corresponding suffix) accepts the
+corresponding suffix (i.e., the suffix of <var>frag</var> that remains
+after <var>p</var> is removed). If there is such a match, the matcher
+returns whatever
+<var>accept</var> returns; otherwise it returns
+<samp>None</samp>.</dd>
+
+<dt><dfn>parse tree</dfn></dt> <dd>a data structure representing a parse
+tree in the usual way. It has the following OCaml type:
+
+<pre><samp>type ('nonterminal, 'terminal) parse_tree =
+  | Node of 'nonterminal * ('nonterminal, 'terminal) parse_tree list
+  | Leaf of 'terminal
+</samp></pre>
+
+If you traverse a parse tree in preorder left to right, the leaves you
+encounter contain the same terminal symbols as the parsed fragment,
+and each internal node of the parse tree corresponds to a rule in the
+grammar, traversed in
+a <a href='https://en.wikipedia.org/wiki/Leftmost_derivation#Derivations_and_syntax_trees'>leftmost
+derivation</a> order.
+</dd>
+
+<dt><dfn>parser</dfn></dt> <dd>a function from fragments to parse trees.
+Parsers consume the entire input, unlike matchers, which may consume only
+an initial prefix of the input.</dd>
+</dl>
+
+<h2>Assignment</h2>
+
+<ol>
+<li>To warm up, notice that the format of grammars is different
+in this assignment, versus Homework 1. Write a function
+<samp>convert_grammar </samp><var>gram1</var><samp></samp> that
+returns a Homework 2-style grammar, which is converted from the
+Homework 1-style grammar <var>gram1</var>. Test your implementation
+of <samp>convert_grammar</samp> on the test grammars given in Homework
+1. For example, the top-level definition <samp>let awksub_grammar_2 =
+convert_grammar awksub_grammar</samp> should
+bind <samp>awksub_grammar_2</samp> to a Homework 2-style grammar that is
+equivalent to the Homework 1-style
+grammar <samp>awksub_grammar</samp>.</li>
+
+<li>As another warmup, write a
+function <samp>parse_tree_leaves <var>tree</var></samp> that traverses
+the parse tree <samp><var>tree</var></samp> left to right and yields a
+list of the leaves encountered.</li>
+
+<li>Write a function <samp>make_matcher
+</samp><var>gram</var><samp></samp> that returns a matcher for the
+grammar <var>gram</var>. When applied to an acceptor <var>accept</var>
+and a fragment <var>frag</var>, the matcher must try the grammar
+rules in order and return the result
+of calling <var>accept</var> on the suffix corresponding to the first
+acceptable matching prefix of <var>frag</var>;
+this is not necessarily the shortest or the longest
+acceptable match. A match is considered to be acceptable if
+<var>accept</var> succeeds when given the suffix
+fragment that immediately follows the matching prefix. When this
+happens, the matcher returns whatever the acceptor
+returned. If no acceptable match is found, the matcher returns
+<samp>None</samp>.</li>
+
+<li>Write a function <samp>make_parser
+</samp><var>gram</var><samp></samp> that returns a parser for the
+grammar <var>gram</var>. When applied to
+a fragment <var>frag</var>, the parser returns an optional parse
+tree. If <var>frag</var> cannot be parsed entirely (that is, from
+beginning to end), the parser returns <samp>None</samp>.
+Otherwise, it returns <samp>Some <var>tree</var></samp>
+where <samp><var>tree</var></samp> is the parse tree corresponding
+to the input fragment. Your parser should try grammar rules in
+the same order as <samp>make_matcher</samp>.</li>
+
+<li>Write one good, nontrivial test case for your <samp>make_matcher</samp>
+function. It should be in the style of the test
+cases given below, but should cover different problem areas. Your test
+case should be named <samp>make_matcher_test</samp>.
+Your test case should test a
+grammar of your own.</li>
+
+<li>Similarly, write a good test case <samp>make_parser_test</samp> for
+your <samp>make_parser</samp> function using your same test
+grammar. This test should check that <samp>parse_tree_leaves</samp> is
+in some sense the inverse of
+<samp>make_parser <var>gram</var></samp>, in that
+when <samp>make_parser <var>gram</var> <var>frag</var></samp>
+returns <samp>Some <var>tree</var></samp>,
+then <samp>parse_tree_leaves <var>tree</var></samp>
+equals <samp><var>frag</var></samp>.</li>
+
+<li>Assess your work by writing an after-action report that explains
+why you decided to write <samp>make_parser</samp> in terms of
+<samp>make_matcher</samp>, or vice versa, or neither;
+and if it's "neither" then briefly explain the approach
+that you took to avoid duplication in the two functions.
+Also, explain any
+weaknesses in your solution in the context of its intended
+application. If possible, illustrate weaknesses by test cases that fail
+with your implementation.
+This report should be a simple <a
+href='http://en.wikipedia.org/wiki/ASCII'>ASCII</a> <a
+href='http://en.wikipedia.org/wiki/Plain_text'>plain text</a> file
+that
+consumes a page or so (at most 100 lines and 80 columns per line,
+and at least 50 lines,
+please). See <a href='../comm.html'>Resources for oral presentations
+and written reports</a> for advice on how to write assessments;
+admittedly much of the advice there is overkill for the simple kind of
+report we're looking for here.</li>
+</ol>
+
+<p>Unlike Homework 1, we are expecting some weaknesses here, so your
+assessment should talk about them. For example, we don't expect that
+your implementation will work with all possible grammars, but we would
+like to know which sort of grammars it will have trouble with.</p>
+
+<p>As with Homework 1, your code may use
+the <a href='http://caml.inria.fr/pub/docs/manual-ocaml/libref/Pervasives.html'><samp>Pervasives</samp></a>
+and <a href='http://caml.inria.fr/pub/docs/manual-ocaml/libref/List.html'><samp>List</samp></a>
+modules, but it should use no other modules. Your code should be free of <a
+href='http://en.wikipedia.org/wiki/Side_effect_%28computer_science%29'>side
+effects</a>. Simplicity
+is more important than efficiency, but your code should avoid using
+unnecessary time and space when it is easy to do so.</p>
+
+<h2>Submit</h2>
+
+<p>We will test your program on the SEASnet Linux servers as before,
+so make sure that
+<samp>/usr/local/cs/bin</samp> is at the start of your path,
+using the same technique as in Homework 1.</p>
+
+<p>Submit three files:</p>
+<ul>
+<li><samp>hw2.ml</samp>
+should define <samp>convert_grammar</samp>, <samp>parse_tree_leaves</samp>,
+<samp>make_matcher</samp> and <samp>make_parser</samp>
+along with any auxiliary types
+and functions needed to define <samp>make_matcher</samp>.</li>
+<li><samp>hw2test.ml</samp> should contain your test cases along
+with any auxiliaries need for them.</li>
+<li><samp>hw2.txt</samp> should hold your assessment.</li>
+</ul>
+
+<h2>Sample test cases</h2>
+
+<pre><samp>let accept_all string = Some string
+let accept_empty_suffix = function
+   | _::_ -&gt; None
+   | x -&gt; Some x
+
+(* An example grammar for a small subset of Awk.
+   This grammar is not the same as Homework 1; it is
+   instead the same as the grammar under
+   "Theoretical background" above.  *)
+
+type awksub_nonterminals =
+  | Expr | Term | Lvalue | Incrop | Binop | Num
+
+let awkish_grammar =
+  (Expr,
+   function
+     | Expr -&gt;
+         [[N Term; N Binop; N Expr];
+          [N Term]]
+     | Term -&gt;
+	 [[N Num];
+	  [N Lvalue];
+	  [N Incrop; N Lvalue];
+	  [N Lvalue; N Incrop];
+	  [T"("; N Expr; T")"]]
+     | Lvalue -&gt;
+	 [[T"$"; N Expr]]
+     | Incrop -&gt;
+	 [[T"++"];
+	  [T"--"]]
+     | Binop -&gt;
+	 [[T"+"];
+	  [T"-"]]
+     | Num -&gt;
+	 [[T"0"]; [T"1"]; [T"2"]; [T"3"]; [T"4"];
+	  [T"5"]; [T"6"]; [T"7"]; [T"8"]; [T"9"]])
+
+let test0 =
+  ((make_matcher awkish_grammar accept_all ["ouch"]) = None)
+
+let test1 =
+  ((make_matcher awkish_grammar accept_all ["9"])
+   = Some []
+
+let test2 =
+  ((make_matcher awkish_grammar accept_all ["9"; "+"; "$"; "1"; "+"])
+   = Some ["+"]
+
+let test3 =
+  ((make_matcher awkish_grammar accept_empty_suffix ["9"; "+"; "$"; "1"; "+"])
+   = None)
+
+(* This one might take a bit longer.... *)
+let test4 =
+ ((make_matcher awkish_grammar accept_all
+     ["("; "$"; "8"; ")"; "-"; "$"; "++"; "$"; "--"; "$"; "9"; "+";
+      "("; "$"; "++"; "$"; "2"; "+"; "("; "8"; ")"; "-"; "9"; ")";
+      "-"; "("; "$"; "$"; "$"; "$"; "$"; "++"; "$"; "$"; "5"; "++";
+      "++"; "--"; ")"; "-"; "++"; "$"; "$"; "("; "$"; "8"; "++"; ")";
+      "++"; "+"; "0"])
+  = Some [])
+
+let test5 =
+  (parse_tree_leaves (Node ("+", [Leaf 3; Node ("*", [Leaf 4; Leaf 5])]))
+   = [3; 4; 5])
+
+let small_awk_frag = ["$"; "1"; "++"; "-"; "2"]
+
+let test6 =
+  ((make_parser awkish_grammar small_awk_frag)
+   = Some (Node (Expr,
+		 [Node (Term,
+			[Node (Lvalue,
+			       [Leaf "$";
+				Node (Expr,
+				      [Node (Term,
+					     [Node (Num,
+						    [Leaf "1"])])])]);
+			 Node (Incrop, [Leaf "++"])]);
+		  Node (Binop,
+			[Leaf "-"]);
+		  Node (Expr,
+			[Node (Term,
+			       [Node (Num,
+				      [Leaf "2"])])])])))
+let test7 =
+  match make_parser awkish_grammar small_awk_frag with
+    | Some tree -> parse_tree_leaves tree = small_awk_frag
+    | _ -> false
+
+</samp></pre>
+
+<h2>Sample use of test cases</h2>
+
+<p>If you put the sample test cases into a file
+<samp>hw2sample.ml</samp>, you should be able to use it with something
+ike the following to
+test your <samp>hw2.ml</samp> solution on the SEASnet implementation
+of OCaml. Similarly, the command <samp>#use "hw2test.ml";;</samp>
+should run your own test cases on your solution.</p>
+
+<pre><samp>$ ocaml
+        OCaml version 4.10.0
+
+# #use "hw2.ml";;
+...
+val parse_tree_leaves : ('a, 'b) parse_tree -&gt; 'b list = &lt;fun&gt;
+...
+val make_matcher :
+  'a * ('a -&gt; ('a, 'b) symbol list list) -&gt;
+  ('b list -&gt; 'c option) -&gt;
+  'b list -&gt; 'c option = &lt;fun&gt;
+...
+val make_parser :
+  'a * ('a -&gt; ('a, 'b) symbol list list) -&gt;
+  'b list -&gt;
+  ('a, 'b) parse_tree option = &lt;fun&gt;
+...
+# #use "hw2sample.ml";;
+val accept_all : 'a -&gt; 'a option = &lt;fun&gt;
+val accept_empty_suffix : 'a list -&gt; 'b list option = &lt;fun&gt;
+type awksub_nonterminals = ...
+val awkish_grammar :
+  awksub_nonterminals *
+  (awksub_nonterminals -&gt; (awksub_nonterminals, string) symbol list list) =
+  (Expr, &lt;fun&gt;)
+val test0 : bool = true
+val test1 : bool = true
+val test2 : bool = true
+val test3 : bool = true
+val test4 : bool = true
+val test5 : bool = true
+...
+val test6 : bool = true
+val test7 : bool = true
+#
+</samp></pre>
+
+<h2>Hint</h2>
+
+<p>You can use <a href='hw2-2006-4.html'>a previous
+Homework 2</a> as a hint. It is a tough homework and is not the same
+problem but there are some common ideas. Look for the sample solution
+at the end.</p>
+
+<footer>
+<hr>
+<small>
+ &copy; 2003, 2004, 2006&ndash;2012, 2014&ndash;2017, 2019, 2020 <a href='../mail-eggert.html'>Paul Eggert</a>.
+ See <a href='../copyright.html'>copying rules</a>.<br>
+
+ $Id: hw2.html,v 1.78 2020/03/29 21:50:09 eggert Exp $
+
+</small>
+</footer>
+
+</body>
+</html>

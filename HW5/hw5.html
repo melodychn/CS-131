@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>Homework 5. Scheme code difference analyzer</title>
+<meta charset='UTF-8'>
+<link rel='author' href='mailto:eggert@cs.ucla.edu'>
+<link rel='license' href='copyright.html'>
+</head>
+
+<body>
+
+<h1>Homework 5. Scheme code difference analyzer</h1>
+
+<h2>The problem</h2>
+
+<p>Your employer Litigious Data Analysts Inc. (LDA) is suing
+Software Verification Modules Inc. (SVM), claiming that SVM
+stole large bodies of LDA's code and incorporated it into their
+data mining product, while tring to hide the fact that the code was stolen
+by renaming identifiers and by
+replacing <samp>lambda</samp> with <samp>λ</samp> and vice versa,
+and also making other minor changes.
+As part of the legal discovery process, LDA has
+obtained copies of SVM's data miner
+and wants to compare it to LDA's to find evidence of unauthorized
+copying. About 5% of both data miners are written in Scheme. Your
+team has been assigned the job of comparing the Scheme parts.</p>
+
+<p>Your boss suggested that you prototype a
+procedure <samp>expr-compare</samp> that compares two Scheme
+expressions <var>x</var> and <var>y</var>, and produces a difference
+summary of where the two expressions are the same and where they
+differ. Your boss wants the difference summary to be easily checkable,
+in case there is a bug in <samp>expr-compare</samp> itself. So you
+decide to have the difference summary also be a Scheme expression
+which, if executed in an environment where the Scheme
+variable <samp>%</samp> is true, has the same behavior
+as <var>x</var>, and otherwise has the same behavior
+as <var>y</var>. You prefer to have a shorter summary expression,
+so you decide that the summary should use <samp>λ</samp> in places where one
+input expression used a <samp>lambda</samp> expression and the other
+used a <samp>λ</samp> expression (however, the summary should
+use <samp>lambda</samp> in places where both input expressions
+used <samp>lambda</samp>).
+You also want the summary expression to use the same
+identifiers as the two input expressions where they agree, and that if
+<var>x</var> declares the bound variable <var>X</var>
+in the same place where <var>y</var> declares the bound variable <var>Y</var>,
+the summary expression should declare a bound
+variable <var>X</var><samp>!</samp><var>Y</var> and use it consistently
+thereafter wherever the input expressions use <var>X</var>
+and <var>Y</var> respectively. (A <dfn>bound variable</dfn> is one
+that is declared in an expression by a binding construct such
+as <samp>lambda</samp>.)</p>
+
+<p>To keep things simple your prototype need not handle arbitrary
+<a href='https://docs.racket-lang.org/plaitypus/Expressions.html'>Racket
+expressions</a>; it can be limited to the subset of expressions that
+consists of literal constants, identifiers, function calls, the
+special form <samp>(quote <var>s-exp</var>)</samp>,
+the special form <samp>(lambda <var>formals expr</var>)</samp>
+where <samp><var>formals</var></samp> is a list of identifiers,
+the equivalent special form <samp>(λ <var>formals body</var>)</samp>,
+and the special-form conditional
+<samp>(if <var>test-expr expr expr</var>)</samp>. To
+avoid confusion the input Scheme expressions cannot contain any
+symbols which contain the <samp>%</samp> or <samp>!</samp> characters.
+Your prototype need not check that
+its inputs are valid; it can have undefined behavior if given inputs
+outside the specified subset.
+For example, your prototype need not worry about inputs like
+<samp>(if)</samp> or <samp>(lambda . 0)</samp>, expressions that
+Racket rejects with the diagnostic “bad syntax”; conversely,
+your prototype should handle valid Scheme expressions like
+<samp>((lambda (if lambda quote) (* quote if lambda 2)) 3 5 7)</samp> where the
+first <samp>lambda</samp> is a keyword and the other symbols
+are ordinary identifiers.</p>
+
+<h2>Assignment</h2>
+
+<p>First, write a Scheme procedure <samp>(expr-compare
+</samp><var>x y</var><samp>)</samp> that implements the specification
+described above. Your implementation must be free of side effects; for
+example you cannot use the <samp>set!</samp> special form. Returned
+values should share storage with arguments when possible; they should
+not copy their arguments.</p>
+
+<p>The output expression should use
+<samp>if</samp> expressions and identifiers containing <samp>!</samp>
+to represent differences whenever the two
+input expressions disagree, attempting to minimize the size of the
+subexpressions under the generated <samp>if</samp>s. As a special
+case, it should use <samp>%</samp> to represent a subexpression that
+is <samp>#t</samp> in LDA's version and <samp>#f</samp> in SVM's
+version, and should use <samp>(not %)</samp> to represent the
+reverse situation. Here are some examples and what they
+should evaluate to.</p>
+
+<pre><samp>(expr-compare 12 12)  &rArr;  12
+(expr-compare 12 20)  &rArr;  (if % 12 20)
+(expr-compare #t #t)  &rArr;  #t
+(expr-compare #f #f)  &rArr;  #f
+(expr-compare #t #f)  &rArr;  %
+(expr-compare #f #t)  &rArr;  (not %)
+(expr-compare 'a '(cons a b))  &rArr;  (if % a (cons a b))
+(expr-compare '(cons a b) '(cons a b))  &rArr;  (cons a b)
+(expr-compare '(cons a lambda) '(cons a λ))  &rArr;  (cons a (if % lambda λ))
+(expr-compare '(cons (cons a b) (cons b c))
+              '(cons (cons a c) (cons a c)))
+  &rArr; (cons (cons a (if % b c)) (cons (if % b a) c))
+(expr-compare '(cons a b) '(list a b))  &rArr;  ((if % cons list) a b)
+(expr-compare '(list) '(list a))  &rArr;  (if % (list) (list a))
+(expr-compare ''(a b) ''(a c))  &rArr;  (if % '(a b) '(a c))
+(expr-compare '(quote (a b)) '(quote (a c)))  &rArr;  (if % '(a b) '(a c))
+(expr-compare '(quoth (a b)) '(quoth (a c)))  &rArr;  (quoth (a (if % b c)))
+(expr-compare '(if x y z) '(if x z z))  &rArr;  (if x (if % y z) z)
+(expr-compare '(if x y z) '(g x y z))
+  &rArr; (if % (if x y z) (g x y z))
+(expr-compare '((lambda (a) (f a)) 1) '((lambda (a) (g a)) 2))
+  &rArr; ((lambda (a) ((if % f g) a)) (if % 1 2))
+(expr-compare '((lambda (a) (f a)) 1) '((λ (a) (g a)) 2))
+  &rArr; ((λ (a) ((if % f g) a)) (if % 1 2))
+(expr-compare '((lambda (a) a) c) '((lambda (b) b) d))
+  &rArr; ((lambda (a!b) a!b) (if % c d))
+(expr-compare ''((λ (a) a) c) ''((lambda (b) b) d))
+  &rArr; (if % '((λ (a) a) c) '((lambda (b) b) d))
+(expr-compare '(+ #f ((λ (a b) (f a b)) 1 2))
+              '(+ #t ((lambda (a c) (f a c)) 1 2)))
+  &rArr; (+
+     (not %)
+     ((λ (a b!c) (f a b!c)) 1 2))
+(expr-compare '((λ (a b) (f a b)) 1 2)
+              '((λ (a b) (f b a)) 1 2))
+  &rArr; ((λ (a b) (f (if % a b) (if % b a))) 1 2)
+(expr-compare '((λ (a b) (f a b)) 1 2)
+              '((λ (a c) (f c a)) 1 2))
+  &rArr; ((λ (a b!c) (f (if % a b!c) (if % b!c a)))
+     1 2)
+(expr-compare '((lambda (lambda) (+ lambda if (f lambda))) 3)
+              '((lambda (if) (+ if if (f λ))) 3))
+  &rArr; ((lambda (lambda!if) (+ lambda!if (if % if lambda!if) (f (if % lambda!if λ)))) 3)
+(expr-compare '((lambda (a) (eq? a ((λ (a b) ((λ (a b) (a b)) b a))
+                                    a (lambda (a) a))))
+                (lambda (b a) (b a)))
+              '((λ (a) (eqv? a ((lambda (b a) ((lambda (a b) (a b)) b a))
+                                a (λ (b) a))))
+                (lambda (a b) (a b))))
+  &rArr; ((λ (a)
+      ((if % eq? eqv?)
+       a
+       ((λ (a!b b!a) ((λ (a b) (a b)) (if % b!a a!b) (if % a!b b!a)))
+        a (λ (a!b) (if % a!b a)))))
+     (lambda (b!a a!b) (b!a a!b)))
+</samp></pre>
+
+<p>(When testing your code, please note that Racket <a
+href='https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop'>read&ndash;eval&ndash;print
+loop</a> quotes its results
+unless they are self-quoting, so that, for example,
+although <samp>12</samp> prints as itself, <samp>(if % 12 20)</samp>
+prints as <samp>'(if % 12 20)</samp>.)</p>
+
+<p>Second, write a Scheme procedure <samp>(test-expr-compare
+</samp><var>x y</var><samp>)</samp> that tests your implementation
+of <samp>expr-compare</samp> by
+using <a href='https://docs.racket-lang.org/guide/eval.html'><samp>eval</samp></a>
+to evaluate the expression
+<var>x</var>, and to evaluate the expression returned by <samp>(expr-compare
+</samp><var>x y</var><samp>)</samp> in the same context
+except with <samp>%</samp> bound to <samp>#t</samp>,
+and which checks that the two expressions yield the same value.
+Similarly, it should check that <var>y</var>
+evaluates to the same value that the output of <samp>expr-compare</samp>
+evaluates to with <samp>%</samp> bound to <samp>#f</samp>.
+The <samp>test-expr-compare</samp> function should return a true value
+if both tests succeed, and <samp>#f</samp> otherwise.</p>
+
+<p>Third, define two Scheme variables <samp>test-expr-x</samp> and <samp>test-expr-y</samp>
+that contain data that can be interpreted as Scheme expressions that test
+<samp>expr-compare</samp> well. Your definitions should look like this:</p>
+
+<pre><samp>(define test-expr-x '(+ 3 ((lambda (a b) (list a b)) 1 2)))
+(define test-expr-y '(+ 2 ((lambda (a c) (list a c)) 1 2)))
+</samp></pre>
+
+<p>except that your definitions should attempt to exercise all the
+specification in order to provide a single test case for this complete
+assignment.</p>
+
+<h2>Submit</h2>
+
+<p>Submit a file <samp>expr-compare.ss</samp> containing the
+definitions of
+<samp>expr-compare</samp>, <samp>test-expr-compare</samp>, <samp>test-expr-x</samp>,
+and <samp>test-expr-y</samp> along with any other auxiliary definitions
+needed. Make sure that your definitions work
+with <a href='http://racket-lang.org/'><samp>racket</samp></a>,
+the Scheme implementation installed on SEASnet.</p>
+
+<footer>
+<hr>
+<small>
+ &copy; 2015&ndash;2016, 2019&ndash;2020 <a href='../mail-eggert.html'>Paul Eggert</a>.
+ See <a href='../copyright.html'>copying rules</a>.<br>
+
+ $Id: hw5.html,v 1.67 2020/05/20 21:41:08 eggert Exp $
+
+</small>
+</footer>
+
+</body>
+</html>

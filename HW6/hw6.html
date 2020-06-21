@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>Homework 6. Evaluate a language for a garage-sale buyer app</title>
+<meta charset='UTF-8'>
+<link rel='author' href='mailto:eggert@cs.ucla.edu'>
+<link rel='license' href='copyright.html'>
+</head>
+
+<body>
+
+<h1>Homework 6. Evaluate a language for a garage-sale buyer app</h1>
+
+<p><small>[<a href='../index.html'>131 home</a> &gt; <a href='../homework.html'>Homework</a>]</small></p>
+
+<h2>Motivation</h2>
+
+<p>You’re in a team working on GarageGarner, an application intended
+  for people who buy things
+  from <a href='https://en.wikipedia.org/wiki/Garage_sale'>garage
+  sales</a>. The old version is web-based, and most of the computation
+  is done in a central server with only the user interface running in
+  users' cell phones. Your boss wants a new version that is less
+  klunky, and is willing for you to develop a native app to do
+  that.</p>
+
+<p>One of the features your boss wants to have is to let the user walk
+  into a garage sale, take a panoroma of the items and price tags on
+  display, and quickly report to you on what the best deals are.  Your
+  current version does something like this by shipping images to the central
+  server and having it do all the work, but this is too slow and chews
+  up too much network bandwidth. Your boss wants most of the algorithm
+  to run in the phone, to make the application faster. Much of the
+  algorithm's difficulty revolves around the fact that it uses
+  machine-learning based models to process the images, and these can
+  take some CPU time to evaluate. However, newer high-end phones such
+  as
+  the <a href='https://appleinsider.com/articles/18/09/18/apples-custom-neural-engine-in-iphone-xs-about-letting-nothing-get-in-your-way'>iPhone
+  XS</a> and
+  the <a href='https://ai.googleblog.com/2019/11/introducing-next-generation-on-device.html'>Pixel
+  4</a> have <a href='https://en.wikipedia.org/wiki/AI_accelerator'>AI
+  accelerators</a> for algorithms such as yours, and your boss wants
+  your native app to use these accelerators if available.</p>
+
+<p>Your team is investigating alternative technologies to implement
+  the new version of the application. You've selected
+  <a href='https://www.tensorflow.org/lite'>TensorFlow Lite</a> for
+  running your model on cell phones, but you need to choose a
+  technology for writing and running your app's user interface.
+  You've been given the job of looking into
+  the <a href='https://flutter.dev/'>Flutter</a> user interface
+  toolkit as one of the technology alternatives. Flutter apps are
+  written in <a href='https://dart.dev/'>Dart</a>, a language that can
+  be compiled to the ARM machine code used in most mobile devices.
+  Your boss suggests that the application
+  use <a href='https://github.com/shaqian/flutter_tflite'>tflite</a>,
+  a Flutter plugin for the TensorFlow Lite API.</p>
+
+<p>For the purpose of this assignment,
+  assume <a href='https://medium.com/dartlang/dart-2-7-a3710ec54e97'>Dart
+  2.7</a> and <a href='https://medium.com/flutter/announcing-flutter-1-12-what-a-year-22c256ba525d'>Flutter 1.12</a> (2019-12-11), along with tflite v1.0.5 (2020-02-26).</p>
+
+<h2>Assignment</h2>
+
+<p>We are not expecting working prototypes for the proposed application.</p>
+
+<p>Do some research on Dart and its support software as a
+potential platform. Your research should include an examination of the
+language and system documentation to help determine whether it would
+be effective. We want to know whether Dart supports the proposed
+application well.
+</p>
+
+<p>Evaluate the features of Dart version 2.7 for the proposed app.
+  Compare and contrast them to the features of
+  Ocaml, Java, and Python that you used to do earlier
+  assignments. What strengths and weaknesses do you see for Dart,
+  compared to these other programming languages?  What are the biggest
+  problems you anticipate when using Dart for this application?</p>
+
+<p>Write an executive summary that compares and contrasts Dart
+  to the other languages, and gives Dart's strengths and weaknesses,
+  along with problems for this application.
+The
+summary should be in 10-point font or larger and should be at most
+three pages. You can put references and appendixes in later pages, if
+you can’t get under the page limit: the appendixes should contain
+any source code or diagrams. Your summary should focus on the
+technology’s effects on ease of use, flexibility, generality,
+performance, reliability; thie idea is to explore the most-important
+language-relevant technical challenges in doing the proposed app. The
+summary should
+be suitable for software executives, that is, for readers who have
+some expertise in software, particularly in managing software
+developers, but who are not experts in Dart.
+Please keep the <a href='../comm.html'>resources for written
+reports and oral presentations</a> in mind, particularly its rubrics
+and its advice for citations to sources that you consulted.</p>
+
+<h2>Submit</h2>
+
+<p>Submit a file <samp>hw6.pdf</samp> containing your summary.</p>
+
+<footer>
+<hr>
+<small>
+ &copy; 2020 <a href='../mail-eggert.html'>Paul Eggert</a>.
+ See <a href='../copyright.html'>copying rules</a>.<br>
+
+ $Id: hw6.html,v 1.71 2020/03/05 02:17:32 eggert Exp $
+
+</small>
+</footer>
+
+</body>
+</html>

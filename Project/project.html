@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>Project. Proxy herd with asyncio</title>
+<meta charset='UTF-8'>
+<link rel='author' href='mailto:eggert@cs.ucla.edu'>
+<link rel='license' href='copyright.html'>
+</head>
+
+<body>
+
+<h1>Project. Proxy herd with <code>asyncio</code></h1>
+
+<p><small>[<a href='../index.html'>131 home</a> &gt; <a href='../homework.html'>Homework</a>]</small></p>
+
+<h2>Background</h2>
+
+<p><a href='http://wikipedia.org'>Wikipedia</a> and its related sites
+are based on the  <a
+href='https://meta.wikimedia.org/wiki/Wikimedia_servers'>Wikimedia
+server</a> platform, which is based on
+<a href='http://www.linux.org/'>GNU/Linux</a>, <a
+href='http://httpd.apache.org/'>Apache</a>, <a
+href='https://mariadb.org/'>MariaDB</a>, and <a
+href='http://www.php.net'>PHP</a>+<a
+href='https://en.wikipedia.org/wiki/JavaScript'>JavaScript</a>,
+using multiple, redundant web
+servers behind a load-balancing virtual router and caching proxy servers
+for reliability and
+performance. For a more extensive discussion, please see
+Roan Kattouw, <a
+href='https://lugod.org/presentations/Wikimedia_Infrastructure_Utrecht_LUG_2011.pdf'>Wikimedia infrastructure</a>, Utrecht LUG 2011.</p>
+
+<p>While this works fairly well for Wikipedia, let's assume that we
+are building a new Wikimedia-style service designed for news, where
+(1) updates to articles will happen far more often, (2) access will be
+required via various protocols, not just HTTP, and (3) clients will
+tend to be more mobile. In this new service the PHP+JavaScript
+application server
+looks like it will be a bottleneck. From a software point of view our
+application will turn into too much of a pain to add newer servers
+(e.g., for access via cell phones, where the cell phones are
+frequently broadcasting
+their <a href='http://en.wikipedia.org/wiki/Global_Positioning_System'>GPS</a>
+locations). From a systems point of view the response time looks like
+it will too slow because the Wikimedia application server is a central
+bottleneck.</p>
+
+<p>Your team has been asked to look into a different architecture
+called an "application server herd", where the multiple application
+servers communicate directly to each other as well as via the core
+database and caches. The interserver communications are designed for
+rapidly-evolving data (ranging from small stuff such as GPS-based locations
+to larger stuff such as ephemeral video data) whereas the database
+server will still be used for more stable data that is less-often
+accessed or that requires transactional semantics. For example, you
+might have three application servers A, B, C such that A talks with
+B and C but B and C do not talk to each other. However, the idea is that if
+a user's cell phone posts its GPS location to any one of the application
+servers then the other servers will learn of the location after one or
+two interserver transmissions, without having to talk to the database.</p>
+
+<p>You've been delegated to look into the <a
+href='https://docs.python.org/3/library/asyncio.html'><code>asyncio</code></a>
+<a href='https://snarky.ca/how-the-heck-does-async-await-work-in-python-3-5/'>asynchronous</a> networking library as a candidate for replacing part or
+all of the
+Wikimedia platform for your application. Your boss thinks that this
+might be a good match for the problem, since <code>asyncio</code>'s event-driven
+nature should allow an update to be processed and forwarded rapidly to
+other servers in the herd. However, she doesn't know how
+well <code>asyncio</code>
+will really work in practice. In particular, she wants to know how easy
+is it to write applications using <code>asyncio</code>, how
+maintainable and reliable
+those applications will be, and how well one can glue together new
+applications to existing ones; she's worried that
+Python's implementation of type checking, memory management, and
+multithreading may cause problems for larger applications. She wants
+you to dig beyond the hype and really understand the pros and cons of
+using <code>asyncio</code>. She suggests that you write a simple and parallelizable
+proxy for the <a href='https://developers.google.com/places/'>Google Places
+API</a>, as an exercise.</p>
+
+<h2>Assignment</h2>
+
+<p>Do some research on <code>asyncio</code> as a potential framework
+for this kind
+of application. Your research should include an examination of the
+<code>asyncio</code> <a
+href='https://github.com/python/cpython/tree/master/Lib/asyncio'>source code</a>
+and <a href='https://docs.python.org/3/library/asyncio.html'>documentation</a>,
+and a small prototype or example code of your own that demonstrates
+whether <code>asyncio</code> would be an
+effective way to implement an application server herd. Please base
+your research on <code>asyncio</code> for Python 3.8.2, even if a newer
+version comes out before the due date; that way we'll all be on the
+same page.</p>
+
+<p>Your prototype should consist of five servers (with server IDs
+'Hill', 'Jaquez', 'Smith', 'Campbell', 'Singleton')
+that communicate to each other (bidirectionally)
+with the following pattern:</p>
+
+<ol>
+<li>Hill talks with Jaquez and Smith.</li>
+<li>Singleton talks with everyone else but Hill.</li>
+<li>Smith talks with Campbell.</li>
+</ol>
+
+<p>Each server should
+accept <a href='http://en.wikipedia.org/wiki/Transmission_Control_Protocol'>TCP</a>
+connections from clients that emulate mobile devices with IP addresses
+and DNS names. A client should be
+able to send its location to the server by sending a message using this
+format:</p>
+
+<pre><samp>IAMAT kiwi.cs.ucla.edu +34.068930-118.445127 1520023934.918963997
+</samp></pre>
+
+<p>The first field <samp>IAMAT</samp> is name of the command where the
+client tells the server where it is. Its operands are the client ID
+(in this case, <samp>kiwi.cs.ucla.edu</samp>),
+the latitude and longitude in decimal degrees
+using <a href='http://en.wikipedia.org/wiki/ISO_6709'>ISO 6709</a>
+notation, and the client's idea of when it sent the message, expressed
+in <a href='http://en.wikipedia.org/wiki/Unix_time'>POSIX time</a>, which
+consists of seconds and nanoseconds since 1970-01-01 00:00:00 UTC,
+ignoring leap seconds; for example, 1520023934.918963997 stands for
+2018-03-02 20:52:14.918963997 UTC. A client ID may be any string of
+non-white-space
+characters. (A white space character is space, tab, carriage return,
+newline, formfeed, or vertical tab.) Fields are separated by one or more
+white space characters and do not contain white space; ignore any leading or trailing white space on the line.</p>
+
+<p>The server should respond to clients with a message using this format:</p>
+
+<pre><samp>AT Hill +0.263873386 kiwi.cs.ucla.edu +34.068930-118.445127 1520023934.918963997
+</samp></pre>
+
+<p>where <samp>AT</samp> is the name of the response, <samp>Hill</samp>
+is the ID of the server that got the message from the
+client, <samp>+0.263873386</samp> is the difference between
+the server's idea of when
+it got the message from the client and the client's time stamp,
+and the remaining fields are a copy of the <samp>IAMAT</samp> data. In
+this example (the normal case), the server's time stamp is greater
+than the client's so the difference is positive, but it might be negative if there
+was enough <a href='http://en.wikipedia.org/wiki/Clock_skew#On_a_network'>clock
+skew</a> in that direction.</p>
+
+<p>Clients can also query for information about places near other
+clients' locations, with a query using this format:</p>
+
+<pre><samp>WHATSAT kiwi.cs.ucla.edu 10 5
+</samp></pre>
+
+<p>The arguments to a WHATSAT message are the name of another client
+(<em>e.g.</em>, kiwi.cs.ucla.edu), a radius (in kilometers) from the
+client (<em>e.g.</em>, 10), and an upper bound on the amount of
+information to receive from Places data within that radius of the
+client (<em>e.g.</em>, 5). The radius must be at most 50 km,
+and the information bound must be at most 20 items,
+since that's all that the Places API supports conveniently.
+</p>
+
+<p>
+The server responds with a <samp>AT</samp> message in the same format
+as before, giving the most recent location reported by the client,
+along with the server that it talked to and the time the server did
+the talking. Following the <samp>AT</samp> message is
+a <a href='https://www.json.org/json-en.html'>JSON</a>-format message,
+exactly in
+the same format that Google Places gives for a Nearby Search request
+(except that any sequence of two or more adjacent newlines is replaced
+by a single newline and that all trailing newlines are removed),
+followed by two newlines. Here is an example (with some details
+omitted and replaced with "<samp>...</samp>").
+</p>
+
+<pre><samp>AT Hill +0.263873386 kiwi.cs.ucla.edu +34.068930-118.445127 1520023934.918963997
+{
+   "html_attributions" : [],
+   "next_page_token" : "CvQ...L2E",
+   "results" : [
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 34.068921,
+               "lng" : -118.445181
+            }
+         },
+         "icon" : "http://maps.gstatic.com/mapfiles/place_api/icons/university-71.png",
+         "id" : "4d56f16ad3d8976d49143fa4fdfffbc0a7ce8e39",
+         "name" : "University of California, Los Angeles",
+         "photos" : [
+            {
+               "height" : 1200,
+               "html_attributions" : [ "From a Google User" ],
+               "photo_reference" : "CnR...4dY",
+               "width" : 1600
+            }
+         ],
+         "rating" : 4.5,
+         "reference" : "CpQ...r5Y",
+         "types" : [ "university", "establishment" ],
+         "vicinity" : "Los Angeles"
+      },
+      ...
+   ],
+   "status" : "OK"
+}
+
+</samp></pre>
+
+<p>(The example ends with an empty line, since it is terminated
+with two newlines.)</p>
+
+<p>Servers should respond to invalid commands with a line that contains
+a question mark (<samp>?</samp>), a space, and then a copy of
+the invalid command.</p>
+
+<p>Servers communicate to each other too, using <samp>AT</samp>
+messages (or some variant of your design) to implement a simple
+<a href='http://en.wikipedia.org/wiki/Flooding_%28computer_networking%29'>flooding
+algorithm</a> to propagate location updates to each other. Servers should
+not propagate place information to each other, only locations; when asked for
+place information, a server should contact Google Places directly for it.
+<strong>Servers should continue to operate if their neighboring servers go down</strong>,
+that is, drop a connection and then reopen a connection later.</p>
+
+<p>Each server should log its input and output into a file, using a format
+of your design. The logs should also contain notices of new and dropped
+connections from other servers. You can use the logs' data in your reports.</p>
+
+<p>You'll need an API key to use Google Places. You can get a free key
+that will let you do a limited amount of testing per day, so don't
+overdo it, and remember that it's not a good idea to publish the key.
+See <a href='https://console.developers.google.com/flows/enableapi?apiid=places_backend&amp;keyType=SERVER_SIDE&amp;reusekey=true'>Enable
+an API</a> (requires authentication) to get an API key.</p>
+
+<p>To query the Google Places API, you will need to send Google
+servers an HTTP request.  However, <code>asyncio</code> only supports
+the TCP and SSL protocols. Your server will need to manually create and send an HTTP
+GET. You may use the <a
+href='https://aiohttp.readthedocs.io/en/stable/'><code>aiohttp</code></a>
+library to do so.</p>
+
+<p>You may use as many <code>.py</code> files as you would like to prototype this server.
+However, your prototype must have a main file named <code>server.py</code>. <code>server.py</code>
+takes one command line argument containing the name of the server
+(e.g. <code>python3 server.py Hill</code>), and must start the server on one of your
+assigned ports. Contact the TAs to get your assigned ports.</p>
+
+<p>Write a report that summarizes your research on whether
+<code>asyncio</code> is a suitable framework for this kind of application.
+Your report should make a recommendation pro or con, and
+justify your recommendation. Describe any problems you ran into.
+Your report should directly address your boss's worries about
+Python's type checking, memory management, and multithreading,
+compared to a Java-based approach to this problem. Your report
+should also briefly compare the overall approach of <code>asyncio</code> to
+that of <a href='http://nodejs.org/'>Node.js</a>, with the
+understanding that you probably won't have time to look deeply into
+Node.js before finishing this project.</p>
+
+<p>Your research and report should focus on
+  language-related issues. For example:</p>
+<ul>
+  <li>How easy is it to write <code>asyncio</code>-based programs that run and exploit server herds?</li>
+  <li>What are the performance implications of using <code>asyncio</code>?</li>
+  <li>How important is it to rely on <a
+      href='https://docs.python.org/3/whatsnew/3.8.html#asyncio'><code>asyncio</code>
+      features of Python 3.8 or
+      later</a>, such as <code>asyncio.run</code> and <code>python -m asyncio</code>,
+    or is it easy to get by with older versions of Python?
+  </li>
+</ul>
+<p>
+Don't worry
+about nontechnical issues like licensing, or about management issues
+like software support and retraining programmers.</p>
+
+<h2>Style issues</h2>
+
+<p>Please see <a
+href='../comm.html'>Resources for oral presentations and written
+reports</a> for advice on generating high-quality reports.</p>
+
+<p>Your report should use standard technical academic style, and
+should have a title, abstract, introduction, body,
+recommendations/conclusions, references, and any other sections
+necessary. Limit your report to at most five pages. Use
+the <a href='https://www.usenix.org/conferences/author-resources/paper-templates'>USENIX
+style</a>, which uses a two-column format with 10-point font for most
+of the text, on an 8&frac12;"&times;11" page; an <a
+href='https://www.usenix.org/sites/default/files/usenix2019_v3.1.pdf'>example of the
+output format</a> and an <a
+href='https://www.usenix.org/system/files/sec19-reardon.pdf'>example
+paper</a> (with an extra coverpage you don't need) are available.</p>
+
+<p>Your report is not expected to be just like that example
+paper! That was written by experts
+describing months of full-time research, and the
+paper is too long for us. It's merely an example of technical style
+and layout.</p>
+
+<h2>Research mechanics</h2>
+
+<p>If you need to run servers on SEASnet to do your research,
+please let the TA know how many TCP ports you need, and we will
+allocate them for you. Please do not use TCP ports at random, as that
+might collide with other students' uses.</p>
+
+<p>If you can think of some similar project you'd like to do, that
+resembles the current project but is cooler, ask the T.A. for
+permission to do the similar project, and then go for it.</p>
+
+<p>Please use only the Python standard library and the libraries mentioned
+in this specification. If you would like to use a different library, please
+get the approval of the TA first. Also, please ensure that your server does
+not send any data other than what is mentioned in the spec over TCP, as we
+will grade your server based on its TCP output.</p>
+
+<h2>Frequently Asked Questions</h2>
+
+<ul>
+	<li>
+		<h3>How do I find the ports assigned to me?</h3>
+		<p>Please email your TA. Your subject line should be &ldquo;Allocate Ports for &lt;Your UCLA ID Here&gt;&rdquo;.</p>
+	</li>
+	<li>
+		<h3>What happens if I don't use my assigned ports?</h3>
+		<p>Your final submission should have your assigned ports hardcoded into it. If not, you will lose points.</p>
+	</li>
+	<li>
+		<h3>What libraries can I use for HTTP requests?</h3>
+		<p>You can use the <code>aiohttp</code> library to send HTTP requests asynchronously. Please do not use synchronous libraries like <code>urllib</code> or <code>requests</code>.</p>
+	</li>
+	<li>
+		<h3>How do I parse JSON?</h3>
+		<p>Use the <code>json</code> package.</p>
+	</li>
+	<li>
+		<h3>Is the 'talks to' relationship bidirectional or unidirectional?</h3>
+		<p>The relationship is bidirectional. If Hill talks to Jaquez, Jaquez also talks to Hill.</p>
+	</li>
+	<li>
+		<h3>How do I test my server?</h3>
+		<p>You may use the <code>telnet</code> or <code>nc</code> commands to test your server. However, we will be testing your servers using a python client implemented with <code>asyncio</code>, so please make sure your solution works with this library.</p>
+	</li>
+	<li>
+		<h3>How should the herd behave if a server goes down?</h3>
+		<p>When a server goes down and comes back up, the herd should talk to it as usual. It is not necessary to propagate old messages to a server when it comes back up.</p>
+	</li>
+	<li>
+		<h3>Can I output logging information to telnet?</h3>
+		<p>Output only the specific response data mentioned in the spec. You will lose points if your server output anything other than what is specified.</p>
+	</li>
+</ul>
+
+<h2>Submitting your work</h2>
+
+<p>Submit:</p>
+
+<ol>
+  <li>a file named <samp>report.pdf</samp> containing a copy of
+your paper in PDF form</li>
+  <li>any other supporting work (e.g., your source code) in a
+    gzipped tar file named <samp>project.tgz</samp>.</li>
+</ol>
+
+<h2>References</h2>
+
+<p>This is a Safari online book, so its
+contents should be viewable by anybody on the UCLA campus.</p>
+
+<p>Luciano Ramalho, <a href='https://proquest.safaribooksonline.com/book/programming/python/9781491946237'><em>Fluent Python</em></a>, O'Reilly (2015), ISBN 978-1-4919-4625-1.</p>
+
+<footer>
+<hr>
+<small>
+ &copy; 2008&ndash;2020 <a href='../mail-eggert.html'>Paul Eggert</a>.
+ See <a href='../copyright.html'>copying rules</a>.<br>
+
+ $Id: pr.html,v 1.58 2020/02/28 01:42:06 eggert Exp $
+
+</small>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>Homework 3. Java shared memory performance races</title>
+<meta charset='UTF-8'>
+<link rel='author' href='mailto:eggert@cs.ucla.edu'>
+<link rel='license' href='copyright.html'>
+</head>
+
+<body>
+
+<h1>Homework 3. Java shared memory performance races</h1>
+
+<h2>Background</h2>
+
+<p>You're working for a startup company Ginormous Data Inc. (GDI) that
+specializes in finding patterns in large amounts of data. For example,
+a big retailer might give GDI all the web visits and purchases made
+and all the credit reports they've inspected and records of all the
+phone calls to them, and GDI will then find patterns in the data that
+suggest which toys will be hot this Christmas season. The programs
+that GDI writes are mostly written in Java. They aren't perfect;
+they're just heuristics, and they're operating on incomplete and
+sometimes-inaccurate information. They do need to be fast, though, as
+your clients are trying to find patterns faster than their competition
+can, and are willing to put up with a few errors even if the results
+aren't perfect, so long as they get good-enough results quickly.</p>
+
+<h2>The problem</h2>
+
+<p> GDI regularly uses multithreading to speed up its applications,
+and many of GDI's programs operate on shared-memory representations of
+the state of a simulation. These states are updated safely, using
+Java's <samp><a href='https://docs.oracle.com/javase/tutorial/essential/concurrency/syncmeth.html'>synchronized</a></samp>
+keyword, and this is known to be a bottleneck in the code. Your boss
+asks you what will happen if you remove the <samp>synchronized</samp>
+keyword. You reply, "It'll break the simulations." She responds, "So
+what? If it's just a small amount of breakage, that might be good
+enough.  Or maybe you can substitute some other synchronization
+strategy that's less heavyweight, and <em>that</em>'ll be good
+enough." She suggests that you look into this by measuring how often
+GDI's programs are likely to break if they switch to
+inadequate-but-faster synchronization methods, and also by
+looking into a safe technique that is faster than <samp>synchronized</samp>.</p>
+
+<p>In some sense the first part of this assignment is the reverse of what
+software engineers traditionally do with multithreaded
+applications. Traditionally, they are worried about race conditions
+and insert enough synchronization so that the races become
+impossible. Here, though, you're deliberately trying to add races to
+the code in order to speed it up, and want to measure whether (and
+ideally, how badly) things will break if you do.</p>
+
+<p>It should be noted that we are on thin ice here, so thin that some
+would argue we've gone over the edge. That's OK: we're experimenting!
+For more about the overall topic, please see: Boehm H-J, Adve SV.
+<a href='https://queue.acm.org/detail.cfm?id=2088916'>You don't
+know jack about shared variables or memory models</a>. <em>ACM Queue</em>
+2011 Dec;9(12):40.
+doi:<a href='https://doi.org/10.1145/2076796.2088916'>10.1145/2076796.2088916</a>.</p>
+
+<h2>The Java memory model</h2>
+
+<p>Java synchronization is based on
+the <a href='https://www.cs.umd.edu/~pugh/java/memoryModel/'>Java
+memory model</a> (JMM), which defines how an application can safely
+avoid data races when accessing shared memory. The JMM lets Java
+implementations optimize accesses by allowing more behaviors than the
+intuitive semantics where there is a global clock and actions by
+threads interleave in a schedule that assumes sequential
+consistency. On modern hardware, these intuitive semantics are often
+incorrect: for example, intraprocessor cache communication might be
+faster than memory, which means that a cached read can return a new
+value on one processor before an uncached read returns an old value on
+another. To allow this kind of optimization, first, the JMM says that
+two accesses to the same location <dfn>conflict</dfn> if they come
+from different threads, at least one is a write, and the location is
+not declared to be <samp><a
+href='https://docs.oracle.com/javase/tutorial/essential/concurrency/atomic.html'>volatile</a></samp>;
+and second, the JMM says that behavior is well-defined to be data-race
+free (DRF) unless two conflicting accesses occur without
+synchronization in between.</p>
+
+<p>The details for proving that a program is DRF can be tricky, as is
+optimizing a Java implementation with data-race freedom in mind. Not
+only have serious memory-synchronization bugs been found in Java
+implementations, occasionally bugs have been found in the JMM itself,
+and sometimes people have even announced bugs only to find out later
+that they weren't bugs after all. For more details about this, please
+see: Lochbihler
+A. <a href='https://pp.info.uni-karlsruhe.de/uploads/publikationen/lochbihler14toplas.pdf'>Making
+the Java memory model safe</a> [PDF]. <em>ACM TOPLAS</em> 2013
+Dec;35(4):12.
+doi:<a href='https://dx.doi.org/10.1145/2518191'>10.1145/2518191</a>.
+You needn't read all this paper, just the first eight pages
+or so&mdash;through the end of &sect;1.1.3.</p>
+
+<h2>How to break sequential consistency in Java</h2>
+
+<p>It's easy to write programs that break sequential consistency in Java.
+To model
+this, you will use a simple prototype that manages a data structure
+that represents an array of <samp>long</samp>s. Each array entry
+starts at zero. A
+state transition, called a <dfn>swap</dfn>, consists of subtracting 1
+from one of the entries, and adding 1 to an entry &ndash; typically
+a different entry although the two entries can be the same in which
+case a swap does nothing.
+The sum of all the array entries
+should therefore
+remain zero; if it becomes nonzero, that indicates that one or more
+transitions weren't done correctly. The converse is not true: if the sum
+is zero it's still possible
+that some state transitions were done incorrectly. Still, this test
+is a reasonable way to check for errors in the simulation.</p>
+
+<p>For an example of a simulation, see <a href='jmm.jar'
+type='application/java-archive'>jmm.jar</a>,
+a <a href='https://docs.oracle.com/javase/tutorial/deployment/jar/basicsindex.html'>JAR
+file</a> containing the simplified source code of a simulation. It
+contains the following interfaces and classes:</p>
+
+<dl>
+ <dt><samp>State</samp></dt>
+ <dd>The API for a simulation state. The only way to change the state
+   is to invoke <samp>swap(i,j)</samp>, where <samp>i</samp>
+   and <samp>j</samp> are indexes into the array.
+   This subtracts 1 from the <samp>i</samp>th entry and adds 1 to
+   the <samp>j</samp>th entry.</dd>
+
+ <dt><samp>NullState</samp></dt>
+ <dd>An implementation of <samp>State</samp> that does nothing.
+   Swapping has no effect. This is used for timing the scaffolding
+   of the simulation.</dd>
+
+ <dt><samp>SynchronizedState</samp></dt>
+ <dd>An implementation of <samp>State</samp> that uses the
+   <samp>Synchronized</samp> class so that it is safe but slow.</dd>
+
+ <dt><samp>SwapTest</samp></dt>
+ <dd>A
+   <samp><a href='https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/lang/Runnable.html'>Runnable</a></samp>
+   class that tests a state implementation by performing
+   a given number of swap transitions on it.</dd>
+
+ <dt><samp>UnsafeMemory</samp></dt>
+ <dd>A test harness, with a <samp>main</samp> method. Invoke it via a
+   shell command like this:
+
+   <pre><samp>time timeout 3600 java UnsafeMemory Synchronized 8 100000000 5</samp></pre>
+   Here, the initial <samp>time</samp> tells the shell to give top-level real,
+   user and system time.
+   The <samp>timeout 3600</samp> puts a 3600-second timeout on Java,
+   helpful if your program mistakenly loops forever.
+   <samp>Synchronized</samp> means to
+   test the <samp>SynchronizedState</samp>
+   implementation; <samp>8</samp> means to divide the work into 8
+   threads of roughly equal size; <samp>100000000</samp> means to do
+   100 million swap transitions total; and <samp>5</samp>
+   says to use a state array of 5 entries.
+   The output of this command should look something like this:
+<pre><samp>Total time 4.71665 s real, 5.14257 s CPU
+Average swap time 377.332 ns real, 51.4257 ns CPU
+
+real	0m4.843s
+user	0m5.248s
+sys	0m0.060s</samp></pre>
+   The output says that from Java’s point of view the entire test took
+   4.71665 s in real time and 5.14257 s of CPU time (the latter
+   can be greater than the former in multithreaded programs).
+   It also says that a single swap by a single thread took an average of
+   377.332 ns of real time and 51.4257 ns of CPU time
+   (the former should always be greater than the latter).
+   From the Linux kernel’s point of view, the entire Java program
+   consumed 4.843 s real time, 5.248 s user CPU time, and 0.060 s system
+   CPU time.
+   </dd>
+</dl>
+
+<h2>Assignment</h2>
+
+<p>Build and use a sequential-consistency-violating
+performance and reliability testing program,
+along the lines described below.</p>
+
+<ul>
+
+ <li>Your program should operate under Java 13 or later. There
+   is no need to run on older Java versions.</li>
+
+ <li>Your program should compile cleanly, without any warnings,
+   simply by using the shell command '<samp>javac *.java</samp>'.</li>
+
+ <li>Please keep your implementation as simple and
+   short as possible, for the benefit of the reader.</li>
+
+ <li>Use two of the SEASnet GNU/Linux servers
+   <samp>lnxsrv0[679]</samp> and <samp>lnxsrv10</samp>,
+   with Java version 13.0.2, to do your performance and reliability
+   measurements. On SEASnet if your <samp>PATH</samp> starts with
+   "<samp>/usr/local/cs/bin</samp>:" you will run with version 13.0.2.
+   Choose two servers with differing types of CPUs (look for "model name"
+   in <samp>/proc/cpuinfo</samp>).</li>
+
+ <li>Do not use more than 40 threads at a time,
+   to avoid overloading the servers.</li>
+
+ <li>Gather and report statistics about your two testing platforms, so that
+   others can reproduce your results if they have similar
+   hardware. See the output of <samp>java -version</samp>,
+   and see the files <samp>/proc/cpuinfo</samp>
+   and <samp>/proc/meminfo</samp>.</li>
+
+ <li>Run the test harness on the <samp>Null</samp>
+   and <samp>Synchronized</samp> classes, on each of the two servers you chose,
+   along with various values for the size of the state array
+   (use 5, 100, and at least one other value),
+   the number of threads (use 1, 8, 40 and at least one other value)
+   and roughly characterize
+   the performance of the two classes.
+   Use enough swap transitions so that your results are dominated by
+   the actual work instead of by startup overhead.
+   <samp>Null</samp> and <samp>Synchronized</samp> should have 100%
+   reliability, in the sense that they should pass all the tests
+   (even though the <samp>Null</samp> class does not work); check this.</li>
+</ul>
+
+<p>Do the following tasks and submit work that embodies your results.</p>
+
+<ol>
+ <li>Implement a new class <samp>UnsynchronizedState</samp>, which is
+   implemented just like <samp>SynchronizedState</samp> except that it
+   does not use the keyword <samp>synchronized</samp> in its
+   implementation. Put the implementation into a new file
+   <samp>UnsynchronizedState.java</samp>.</li>
+
+ <li>Design and implement a new class <samp>AcmeSafeState</samp> of
+   that is safe without using the <samp>synchronized</samp> keyword.
+   Your imlementation should use
+   <samp><a href='https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/util/concurrent/atomic/AtomicLongArray.html'>java.util.concurrent.atomic.AtomicLongArray</a></samp>.
+   The goal is to achieve better performance
+   than <samp>SynchronizedState</samp> while retaining safety.
+   Put the implementation into a new file
+   <samp>AcmeSafeState.java</samp>.</li>
+
+ <li>Integrate all the classes into a single program
+   <samp>UnsafeMemory</samp>, which you should be able to compile
+   with the command '<samp>javac *.java</samp>' and to run
+   using the same sort of shell command as the test harness.
+   Your version of <samp>UnsafeMemory.java</samp> will need
+   to differ slightly from the one distributed as part of this assignment</li>
+
+ <li>For each
+   class <samp>SynchronizedState</samp>, <samp>UnsynchronizedState</samp>,
+   and <samp>AcmeSafeState</samp>,
+   measure and characterize the class's
+   performance and reliability as described above (that is, use two
+   servers, vary the state array size, and vary the number of threads).
+   Attempt to find areas where these differ.</li>
+
+ <li>Compare the classes' reliability and performance to each other.
+   For each class, say what kind of benchmarks (if any) the class
+   seems to do best and worst on.</li>
+</ol>
+
+<p>To help think about your <samp>AcmeSafeState</samp> implementation,
+  read Doug
+  Lea's <a href='http://gee.cs.oswego.edu/dl/html/j9mm.html'>Using JDK
+  9 Memory Order Nodes</a>, and you can look at the following
+  packages and classes for other facts and ideas:</p>
+
+<ol>
+  <li><samp><a href='https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/util/concurrent/package-summary.html'>java.util.concurrent</a></samp></li>
+  <li><samp><a href='https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/util/concurrent/atomic/package-summary.html'>java.util.concurrent.atomic</a></samp></li>
+  <li><samp><a href='https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/util/concurrent/locks/package-summary.html'>java.util.concurrent.locks</a></samp></li>
+  <li><samp><a href='https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/lang/invoke/VarHandle.html'>java.lang.invoke.VarHandle</a></samp></li>
+</ol>
+
+<p>Write a report that contains the following explanations and
+discussions.  Your report should be at least two and at most five pages
+long, using 10-point font in a two-column format on an
+8&frac12;"&times;11" page, as suggested in the USENIX template
+mentioned in <a href='../comm.html'>Resources for written reports and
+oral presentations</a>.</p>
+
+<ul>
+ <li>Characterize your <samp>AcmeSafeState</samp> implementation's basic idea
+   using terminology taken from Lea's paper.
+   In particular, explain whether and why
+   your <samp>AcmeSafeState</samp> class is DRF.</li>
+
+ <li>Discuss any problems you had to
+   overcome to do your measurements properly.</li>
+
+ <li>Give your measurements and analysis of the measurements.</li>
+</ul>
+
+<h2>Submit</h2>
+
+<p>Submit two files:</p>
+<ol>
+  <li>A JAR file <samp>jmmplus.jar</samp> containing your
+    solution. Include your source code (<samp>.java</samp> files)
+    not the <samp>.class</samp> files.
+    It should contain a copy of the files
+in <samp>jmm.jar</samp>, possibly with modifications (though you
+should attempt to minimize these modifications). It should also
+    contain the source code to your new classes. Please limit
+      your source-code lines to 80 characters or less.</li>
+    <li> A PDF
+file <samp>report.pdf</samp> containing your explanations,
+discussions, and performance and reliability results.</li>
+    </ol>
+
+<p>Do not put your name or student-ID into your submissions.</p>
+
+<footer>
+<hr>
+<small>
+ &copy; 2014&ndash;2020 <a href='../mail-eggert.html'>Paul Eggert</a>.
+ See <a href='../copyright.html'>copying rules</a>.<br>
+
+ $Id: hw3.html,v 1.86 2020/01/30 03:36:08 eggert Exp $
+
+</small>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+For the first six problems, I solved the problem by looking through slides
+posted by the TA and examples that we went over during discussion. I found
+those very help. The problems were a bit challenging in that as I never 
+before coded in ocaml, it took some time to get used to the syntax and way
+of thinking. I spent the most time solving problem 7, which is to remove
+unreachable grammar rules. I knew that I had to parse the given input into 
+many different chunks, but it was difficult to do that in ocaml as we can't 
+use loops. So, I had to use different recursive helper functions to extract
+information that I need from the given grammar. As I am used to using loops,
+having to use recursion for every function was challenging. Problem 7 became
+easier to solve after I realize to use the set functions I already previously
+wrote. I found problems easier to solve after splitting them up into smaller
+subproblems.

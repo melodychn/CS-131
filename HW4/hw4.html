@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>Homework 4. Towers solver</title>
+<meta charset='UTF-8'>
+<link rel='author' href='mailto:eggert@cs.ucla.edu'>
+<link rel='license' href='copyright.html'>
+</head>
+
+<body>
+
+<h1>Homework 4. Towers solver</h1>
+
+<h2>Motivation</h2>
+
+
+<p><a href='https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/towers.html'>Towers</a> is an arithmetical-logical puzzle whose goal is to fill in an <var>N</var>&times;<var>N</var> grid with integers, so that every row and every column contains all the integers from 1 through <var>N</var>, and so that certain extra constraints can be met. These extra constraints are specified by counts of which towers are visible from an edge of the grid, assuming that each grid entry is occupied by a tower whose height is given by the grid entry. There are 4<var>N</var> counts since the grid has four edges. For example, if <var>N</var> is 5 and the counts for the top, bottom, left, and right edges are [2,3,2,1,4], [3,1,3,3,2], [4,1,2,5,2], and [2,4,2,1,2] respectively, then there is one solution with rows [2,3,4,5,1], [5,4,1,3,2], [4,1,5,2,3], [1,2,3,4,5], [3,5,2,1,4] respectively, as shown in the <a href='https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/towers.html#5:2/3/2/1/4/3/1/3/3/2/4/1/2/5/2/2/4/2/1/2'>corresponding puzzle</a> in <a href='https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/towers.html'>Simon Tatham's implementation of the Towers puzzle</a>.</p>
+
+<p>A human doing the abovementioned puzzle can reason it out with arguments like the following. A 5 must be adjacent to each 1 count. The only remaining row or column lacking a 5 is the center row and column, so the center must be a 5. The 5 count at the left of row 4 means that row 4 must be [1,2,3,4,5]. The 4 count for column 5 means that row 1 column 5 must be a 1 or 2, and the 4 count for row 1 therefore means that row 1 must be either [1,3,4,5,2] or [2,3,4,5,1], so we can safely assume row 1 columns 2 and 3 must be [3,4]. For fun, you might try filling out the rest of the puzzle, using similar reasoning.</p>
+
+<p>A computer solving this problem doesn't need to be that smart. It can rely on a small list of solution strategies rather than the ad hoc approach taken by humans.</p>
+
+<h2>Assignment</h2>
+
+<p>Three things. First, write a predicate <samp>tower/3</samp> that
+accepts the following arguments:</p>
+
+<ol>
+<li><var>N</var>, a nonnegative integer specifying the size of the square grid.</li>
+<li><var>T</var>, a list of N lists, each representing a row of the square grid. Each row is represented by a list of N distinct integers from 1 through N. The corresponding columns also contain all the integers from 1 through N.</li>
+<li><var>C</var>, a structure with function symbol <samp>counts</samp> and arity 4. Its arguments are all lists of N integers, and represent the tower counts for the top, bottom, left, and right edges, respectively.</li>
+</ol>
+
+<p><em>Precondition.</em> No solution will involve an integer that exceeds the <a href='http://www.gprolog.org/manual/html_node/gprolog055.html#Finite-Domain-variables'><samp>vector_max</samp></a> of the GNU Prolog finite domain solver. Also, all arguments must be finite terms of the proper types. Your code need not check these preconditions; it can assume that the preconditions hold. Arguments can contain logical variables, except that the first argument <var>N</var> must be bound to a nonnegative integer.</p>
+
+<p>Second, write a predicate <samp>plain_tower/3</samp> that acts like <samp>tower/3</samp> but does not use the GNU Prolog finite domain solver. Instead, <samp>plain_tower/3</samp> should enumerate the possible integer solutions using standard Prolog primitives such as <samp>member/2</samp> and <samp>is/2</samp>. Although <samp>plain_tower/3</samp> should be simpler than <samp>tower/3</samp> and should not be restricted to integers less than <samp>vector_max</samp>, the tradeoff is that it may have worse performance. Illustrate the performance difference on a test case of your own design, measuring performance with <a href='http://gprolog.univ-paris1.fr/manual/html_node/gprolog048.html#statistics%2F2'><samp>statistics/0</samp> or <samp>statistics/2</samp></a>. Package up your test case in a predicate <samp>speedup/1</samp>, which runs both <samp>tower/3</samp> and <samp>plain_tower/3</samp> and unifies its argument to the floating-point ratio of the latter's total CPU time to the former (hopefully this figure will be greater than 1).</p>
+
+<p>Third, consider the problem of ambiguous Towers puzzle. Write a Prolog predicate <samp>ambiguous(N, C, T1, T2)</samp> that uses <samp>tower/3</samp> to find a single <var>N</var>&times;<var>N</var> Towers puzzle with edges <var>C</var> and two distinct solutions <var>T1</var> and <var>T2</var>, and use it to find an ambiguous puzzle. Report the ambiguous puzzle you found.</p>
+
+<h2>Examples</h2>
+
+<p>As a trivial example, <samp>tower(0,T,C)</samp> should generate one solution <samp>N=0, T=[], C=counts([],[],[],[])</samp>. <samp>tower(1,T,C)</samp> should generate one solution <samp>N=1, T=[[1]], C=counts([1],[1],[1],[1])</samp>. <samp>tower(2,T,C)</samp> should generate the two solutions <samp>N=2, T=[[1,2],[2,1]], C=counts([2,1],[1,2],[2,1],[1,2])</samp> and <samp>N=2, T=[[2,1],[1,2]], C=counts([1,2],[2,1],[1,2],[2,1])</samp>, in either order. <samp>tower(3,T,C)</samp> should generate several solutions, one of which is <samp>N=3, T=[[1,2,3],[2,3,1],[3,1,2]], C=counts([3,2,1],[1,2,2],[3,2,1],[1,2,2])</samp>. If the second and third arguments are variables, the number of solutions grows rapidly with <var>N</var>: for example, <samp>tower(3,T,C)</samp> should generate a dozen solutions, and <samp>tower(4,T,C)</samp> should generate hundreds of solutions.</p>
+
+<p>You should be able to use <samp>tower/3</samp> to generate edge counts from grids and vice versa. For example, the query:</p>
+
+<pre>?- tower(5,
+         [[2,3,4,5,1],
+          [5,4,1,3,2],
+          [4,1,5,2,3],
+          [1,2,3,4,5],
+          [3,5,2,1,4]],
+         C).
+</pre>
+
+<p>should output this (reindented to fit):</p>
+
+<pre>C = counts([2,3,2,1,4],
+           [3,1,3,3,2],
+           [4,1,2,5,2],
+           [2,4,2,1,2]) ?
+</pre>
+
+<p>and if you respond with a "<samp>;</samp>" the next result should be "no". Conversely, the query:</p>
+
+<pre>?- tower(5, T,
+         counts([2,3,2,1,4],
+                [3,1,3,3,2],
+                [4,1,2,5,2],
+                [2,4,2,1,2])).
+</pre>
+
+<p>should output this (reindented to fit):</p>
+
+<pre>T = [[2,3,4,5,1],
+     [5,4,1,3,2],
+     [4,1,5,2,3],
+     [1,2,3,4,5],
+     [3,5,2,1,4]] ?
+</pre>
+
+<p>and again if you respond with a "<samp>;</samp>" the next result should be "no" because this puzzle has only one solution.</p>
+
+<p>Here is an example of variables in both the second and third arguments:</p>
+
+<pre>?- tower(5,
+         [[2,3,4,5,1],
+          [5,4,1,3,2],
+          Row3,
+          [RC41,5|Row4Tail],
+          Row5],
+         counts(Top, [4|BottomTail],
+                [Left1,Left2,Left3,Left4,5],
+                Right)).
+</pre>
+
+<p>It should generate this single solution:</p>
+
+<pre>BottomTail = [2,2,2,1]
+Left1 = 4
+Left2 = 1
+Left3 = 2
+Left4 = 2
+RC41 = 3
+Right = [2,4,2,2,1]
+Row3 = [4,1,5,2,3]
+Row4Tail = [2,1,4]
+Row5 = [1,2,3,4,5]
+Top = [2,3,2,1,5]
+</pre>
+
+<h2>Submit</h2>
+
+<p>Submit a Prolog file named <samp>tower.pl</samp> containing all the requested code. Also submit a text file <samp>tower-notes.txt</samp> that contains the requested information that is not source code.</p>
+
+<footer>
+<hr>
+<small>
+ &copy; 2008, 2009, 2010, 2014, 2015, 2018 <a href="../mail-eggert.html">Paul Eggert</a>.
+ See <a href="../copyright.html">copying rules</a>.<br />
+
+ $Id: hw4.html,v 1.100 2019/09/25 00:54:08 eggert Exp $
+
+</small>
+</footer>
+
+</body>
+</html>
