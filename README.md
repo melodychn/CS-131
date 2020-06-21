@@ -1,4 +1,4 @@
-# CS 131 Programming Language
+# CS 131 Programming Languages
 My work for CS 131 in the Spring of 2020. 
 
 Taught by Professor Eggert. 
