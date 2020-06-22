@@ -8,7 +8,7 @@ import json
 
 PRINT_FLAG = 0
 LOG_FLAG = 1
-KEY = 'AIzaSyAAE36Qo4tI0aWY1rVWNibmuiGoFNmTCyU'
+KEY = 'key'
 
 server_names = {"Hill": 12090, "Jaquez": 12091, "Smith": 12092, "Campbell": 12093, "Singleton": 12094}
 server_neighbors = {
